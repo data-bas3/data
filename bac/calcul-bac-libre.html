@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:description" content=" أداة بسيطة وفعالة لحساب معدلك النهائي بناءً على علاماتك في مختلف المواد والمعاملات الخاصة بكل مسلك">
+  <meta property="og:image" content="http://database.magix.net/public/calcul-bac-libre.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://database.magix.net/public/calcul-bac-libre.html">
+  
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="حساب معدل البكالوريا الحرة">
+  <meta name="twitter:description" content=" أداة بسيطة وفعالة لحساب معدلك النهائي بناءً على علاماتك في مختلف المواد">
+  <meta name="twitter:image" content="http://database.magix.net/public/calcul-bac-libre.png">
+  
+  <title>حساب معدل البكالوريا الحرة</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Markazi+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Markazi Text', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a2980, #26d0ce, #1a2980);
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+    
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      max-width: 720px; /* 20% wider */
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(5px);
+      margin: 20px 0;
+      border: 3px solid #1a2980;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      z-index: -1;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #1a2980;
+      font-size: 2.8rem;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 25%;
+      width: 50%;
+      height: 4px;
+      background: linear-gradient(to right, #1a2980, #26d0ce);
+      border-radius: 3px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      font-size: 1.3rem;
+      color: #1a2980;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 10px;
+      font-weight: 600;
+      color: #1a2980;
+      font-size: 1.3rem;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-family: 'Markazi Text', sans-serif;
+      background: #f8f9ff;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    
+    select:focus, input[type="number"]:focus {
+      border-color: #26d0ce;
+      box-shadow: 0 0 0 4px rgba(38, 208, 206, 0.3);
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    
+    .exemption-container {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+      background: #f0f8ff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    
+    .exemption-container label {
+      margin: 0 0 0 15px;
+      font-weight: normal;
+      color: #1a2980;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    
+    .exemption-container input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(to right, #1a2980, #26d0ce);
+      color: white;
+      border: none;
+      font-size: 1.4rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: 'Markazi Text', sans-serif;
+      letter-spacing: 1px;
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 18px rgba(26, 41, 128, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: 0.5s;
+    }
+    
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(26, 41, 128, 0.5);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 12px rgba(26, 41, 128, 0.3);
+    }
+
+    .result {
+      margin-top: 30px;
+      font-size: 1.8rem;
+      text-align: center;
+      padding: 30px;
+      border-radius: 15px;
+      background: linear-gradient(to right, #f8f9ff, #eef7ff);
+      font-weight: 700;
+      border: 2px solid #1a2980;
+      display: none;
+    }
+    
+    .result.visible {
+      display: block;
+      animation: fadeIn 0.6s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Confetti Celebration */
+    #celebration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+
+    .congrats-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4.2rem;
+      font-weight: bold;
+      color: #1a2980;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+      animation: fadeInOut 8s ease forwards;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 40px 60px;
+      border-radius: 25px;
+      box-shadow: 0 0 50px rgba(38, 208, 206, 0.6);
+      border: 4px solid #26d0ce;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+      30% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      animation: fall 5s linear forwards;
+      opacity: 0.8;
+      border-radius: 4px;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+      
+      .container {
+        padding: 25px;
+        max-width: 95%;
+      }
+      
+      h1 {
+        font-size: 2.3rem;
+      }
+      
+      .congrats-message {
+        font-size: 2.8rem;
+        padding: 25px;
+      }
+      
+      label {
+        font-size: 1.2rem;
+      }
+    }
+    
+    .instructions {
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 25px;
+      color: #1a2980;
+      background: rgba(38, 208, 206, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+    }
+    
+    .calculation-details {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #555;
+      background: #f8f9ff;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>حساب معدل البكالوريا الحرة</h1>
+  
+ 
+
+  <div class="instructions">
+    <p>يرجى إدخال النقط التي حصلت عليها في كل مادة من أجل حساب معدلك النهائي</p>
+  </div>
+
+  <label for="track">اختر المسلك:</label>
+  <select id="track" onchange="updateLabels()">
+    <option value="humanities">مسلك الآداب والعلوم الإنسانية</option>
+    <option value="literature">مسلك الآداب</option>
+  </select>
+
+  <form id="gradeForm">
+    <label id="label-fr">اللغة الفرنسية (معامل 4)</label>
+    <input type="number" min="0" max="20" step="0.01" id="fr" required placeholder="أدخل النقطة">
+
+    <label id="label-islamic">التربية الإسلامية (معامل 2)</label>
+    <input type="number" min="0" max="20" step="0.01" id="islamic" required placeholder="أدخل النقطة">
+
+    <label id="label-math">الرياضيات (معامل 1)</label>
+    <input type="number" min="0" max="20" step="0.01" id="math" required placeholder="أدخل النقطة">
+
+    <div class="input-group">
+      <label id="label-sport">التربية البدنية (معامل 1)</label>
+      <input type="number" min="0" max="20" step="0.01" id="sport" required placeholder="أدخل النقطة"  >
+      <div class="exemption-container">
+        <input type="checkbox" id="sport-exempt" onchange="toggleSportExemption()">
+        <label for="sport-exempt">إعفاء من التربية البدنية (لا يتم احتسابها في المعدل)</label>
+      </div>
+    </div>
+
+    <label id="label-philosophy">الفلسفة (معامل 4)</label>
+    <input type="number" min="0" max="20" step="0.01" id="philosophy" required placeholder="أدخل النقطة">
+
+    <label id="label-social">الاجتماعيات (معامل 4)</label>
+    <input type="number" min="0" max="20" step="0.01" id="social" required placeholder="أدخل النقطة">
+
+    <label id="label-english">اللغة الإنجليزية (معامل 3)</label>
+    <input type="number" min="0" max="20" step="0.01" id="english" required placeholder="أدخل النقطة">
+
+    <label id="label-arabic">اللغة العربية (معامل 3)</label>
+    <input type="number" min="0" max="20" step="0.01" id="arabic" required placeholder="أدخل النقطة">
+
+    <button type="button" onclick="calculateAverage()">
+      احسب المعدل
+    </button>
+  </form>
+
+  <div class="result" id="result"></div>
+</div>
+
+<div id="celebration">
+  <div class="congrats-message" id="congratsMessage" style="display: none;">
+    🎉 مبروك النجاح 🎉
+  </div>
+</div>
+
+<!-- Background Music (muted hidden YouTube iframes) -->
+<div style="position:absolute; left:-9999px; top:-9999px;">
+  <iframe
+    src="https://www.youtube.com/embed/X7b-Nc1I2aA?autoplay=1&mute=1&loop=1&playlist=X7b-Nc1I2aA"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen
+    width="1"
+    height="1">
+  </iframe>
+  <iframe
+    src="https://www.youtube.com/embed/FR0uVa8TUA8?autoplay=1&mute=1&loop=1&playlist=FR0uVa8TUA8"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen
+    width="1"
+    height="1">
+  </iframe>
+</div>
+
+<script>
+  const weights = {
+    humanities: { fr: 4, islamic: 2, math: 1, sport: 1, philosophy: 4, social: 4, english: 3, arabic: 3 },
+    literature:  { fr: 4, islamic: 2, math: 1, sport: 1, philosophy: 3, social: 3, english: 4, arabic: 4 }
+  };
+
+  const subjectNames = {
+    fr: "اللغة الفرنسية",
+    islamic: "التربية الإسلامية",
+    math: "الرياضيات",
+    sport: "التربية البدنية",
+    philosophy: "الفلسفة",
+    social: "الاجتماعيات",
+    english: "اللغة الإنجليزية",
+    arabic: "اللغة العربية"
+  };
+
+  function updateLabels() {
+    const track = document.getElementById('track').value;
+    const currentWeights = weights[track];
+    for (let subject in currentWeights) {
+      const label = document.getElementById("label-" + subject);
+      if (label) label.textContent = `${subjectNames[subject]} (معامل ${currentWeights[subject]})`;
+    }
+  }
+
+  function toggleSportExemption() {
+    const exempt = document.getElementById('sport-exempt').checked;
+    const sportInput = document.getElementById('sport');
+    sportInput.disabled = exempt;
+    sportInput.style.backgroundColor = exempt ? '#f0f0f0' : '#f8f9ff';
+    sportInput.style.borderColor = exempt ? '#ccc' : '#ddd';
+  }
+
+  function calculateAverage() {
+    const track = document.getElementById('track').value;
+    const currentWeights = weights[track];
+    let total = 0;
+    let totalWeight = 0;
+    let details = "";
+    
+    const exemptSport = document.getElementById('sport-exempt').checked;
+
+    for (let subject in currentWeights) {
+      // Skip sport if exempted
+      if (subject === 'sport' && exemptSport) continue;
+      
+      const input = document.getElementById(subject);
+      const grade = parseFloat(input.value);
+      const weight = currentWeights[subject];
+      
+      if (isNaN(grade) || grade < 0 || grade > 20) {
+        alert(`يرجى إدخال علامة صحيحة بين 0 و 20 لمادة ${subjectNames[subject]}`);
+        return;
+      }
+      
+      total += grade * weight;
+      totalWeight += weight;
+      
+      // Add to calculation details
+      details += `<div style="margin-bottom: 5px;">${subjectNames[subject]}: ${grade} × ${weight} = <strong>${(grade * weight).toFixed(2)}</strong></div>`;
+    }
+
+    const average = (total / totalWeight).toFixed(2);
+    
+    // Set result
+    let resultHTML = `
+      <div style="font-size: 2.2rem; margin-bottom: 20px; color: #1a2980;">
+        المعدل العام هو: <strong style="font-size: 2.4rem;">${average}</strong>
+      </div>
+    `;
+    
+    // Add calculation details
+    resultHTML += `
+      <div class="calculation-details">
+        <div style="font-size: 1.3rem; margin-bottom: 15px; text-align: center; color: #1a2980;">
+          تفاصيل الحساب
+        </div>
+        ${details}
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
+          <div style="font-size: 1.2rem; margin-bottom: 5px;">المجموع: <strong>${total.toFixed(2)}</strong></div>
+          <div style="font-size: 1.2rem; margin-bottom: 5px;">مجموع المعاملات: <strong>${totalWeight}</strong></div>
+          <div style="font-size: 1.2rem; margin-bottom: 5px;">المعدل = ${total.toFixed(2)} ÷ ${totalWeight} = <strong>${average}</strong></div>
+        </div>
+      </div>
+    `;
+    
+    if (average >= 10) {
+      resultHTML += `
+        <div style="color: #1a2980; font-size: 1.3rem; margin-top: 20px; 
+                    background: linear-gradient(to right, #e8f4ff, #d1e9ff); 
+                    padding: 15px; border-radius: 10px; text-align: center; border: 2px solid #1a2980;">
+          مبروك! لقد نجحت في امتحانات البكالوريا
+        </div>
+      `;
+      document.getElementById('result').style.color = "#1a2980";
+      document.getElementById('result').style.borderColor = "#1a2980";
+      showCelebration();
+    } else {
+      resultHTML += `
+        <div style="color: #c0392b; font-size: 1.3rem; margin-top: 20px; 
+                    background: linear-gradient(to right, #ffebee, #ffdde0); 
+                    padding: 15px; border-radius: 10px; text-align: center; border: 2px solid #c0392b;">
+          يجب بذل المزيد من الجهد للنجاح في المرة القادمة
+        </div>
+      `;
+      document.getElementById('result').style.color = "#c0392b";
+      document.getElementById('result').style.borderColor = "#c0392b";
+    }
+    
+    if (exemptSport) {
+      resultHTML += `
+        <div style="color: #d35400; font-size: 1.2rem; margin-top: 20px; 
+                    background: #fff8e1; padding: 12px; border-radius: 10px; text-align: center; border: 1px solid #ffd54f;">
+          ملاحظة: تم إعفاؤك من مادة التربية البدنية ولم يتم احتسابها
+        </div>
+      `;
+    }
+    
+    document.getElementById('result').innerHTML = resultHTML;
+    document.getElementById('result').classList.add('visible');
+  }
+
+  function showCelebration() {
+    const message = document.getElementById('congratsMessage');
+    const container = document.getElementById('celebration');
+    message.style.display = 'block';
+    container.style.display = 'block';
+
+    // Create confetti
+    for (let i = 0; i < 200; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.backgroundColor = getRandomColor();
+      confetti.style.animationDuration = (2 + Math.random() * 4) + 's';
+      confetti.style.animationDelay = (Math.random() * 2) + 's';
+      container.appendChild(confetti);
+    }
+
+    setTimeout(() => {
+      message.style.display = 'none';
+      container.style.display = 'none';
+      document.querySelectorAll('.confetti').forEach(e => e.remove());
+    }, 4000);
+  }
+
+  function getRandomColor() {
+    const colors = ['#f44336', '#e91e63', '#9c27b0', '#3f51b5', '#03a9f4', '#4caf50', '#ff9800', '#ffeb3b', '#00bcd4', '#8bc34a'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  // Initialize the page
+  window.onload = function() {
+    updateLabels();
+    toggleSportExemption(); // Set initial state for sport exemption
+  };
+</script>
+
+<!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//auditory-lab.com/matomo/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+</body>
+</html>
