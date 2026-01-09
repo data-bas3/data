@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Video Preview | CyberCure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --purple: #7b2cbf;
+      --purple-dark: #5a189a;
+      --dark: #212529;
+      --gray: #6c757d;
+      --light-gray: #f8f9fa;
+      --danger: #ef233c;
+      --danger-dark: #d90429;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: var(--dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    @supports (font-variation-settings: normal) {
+      body {
+        font-family: 'Inter var', -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      flex: 1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--purple);
+      text-shadow: 2px 2px 4px rgba(123, 44, 191, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo::before {
+      content: "";
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      background-color: var(--purple);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+      mask-size: contain;
+    }
+
+    .skip-ad-container {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      background: white;
+      padding: 0.9rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .instruction-text {
+      color: var(--gray);
+      font-size: 1.14rem;
+      font-weight: 500;
+    }
+
+    .pointer-arrow {
+      color: var(--primary);
+      font-weight: bold;
+      transform: scale(1.68);
+    }
+
+    .skip-ad-btn {
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      padding: 0.72rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      cursor: not-allowed;
+      font-size: 1.14rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .skip-ad-btn.active {
+      cursor: pointer;
+      background-color: var(--danger-dark);
+    }
+
+    .skip-ad-btn:hover.active {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(239, 35, 60, 0.3);
+    }
+
+    .countdown {
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+    }
+
+    .video-section {
+      padding: 3rem 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 70%;
+      padding-bottom: 39.375%;
+      background: #000;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .hidden-videos {
+      display: none;
+    }
+
+    footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 2rem 0;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.5rem;
+    }
+
+    .footer-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .footer-text {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .loading .countdown {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1.25rem;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .skip-ad-container {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 1rem;
+      }
+
+      .video-wrapper {
+        width: 100%;
+        padding-bottom: 56.25%;
+      }
+    }
+
+    .visitor-counter {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      font-size: 0.75rem;
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* YouTube Subscribe Button Styling */
+    .subscribe-widget {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0 0.5rem 0.5rem 0;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">CyberCure</div>
+      <div class="skip-ad-container">
+        <div class="instruction-text">Please wait 30 seconds to skip the ad</div>
+        <div class="pointer-arrow">→</div>
+        <button id="skipAd" class="skip-ad-btn loading">
+          <span>Skip Ad</span>
+          <span id="countdown" class="countdown">(30)</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="video-section">
+      <div class="video-wrapper">
+        <iframe id="mainVideo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="hidden-videos">
+        <iframe src="https://www.youtube.com/embed/AYaMqAOun3M?autoplay=1&mute=1"></iframe>
+        <iframe src="https://www.youtube.com/embed/X7b-Nc1I2aA?autoplay=1&mute=1"></iframe>
+        <iframe src="https://www.youtube.com/embed/TJBWq1XZL-8?autoplay=1&mute=1"></iframe>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-title">This preview is powered by CyberCure</div>
+      <div class="footer-text">
+        CyberCure is dedicated to making the internet a safer place for everyone. Use the site preview above to make sure the link takes you where you expect.
+      </div>
+    </div>
+  </footer>
+
+  <!-- YouTube Subscribe Button -->
+  <div class="subscribe-widget" id="subscribeWidget">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+      <span style="font-size: 0.75rem; font-weight: 600; color: #333; white-space: nowrap;">
+        Subscribe Now For More Freebies!
+      </span>
+      <div class="g-ytsubscribe"
+           data-channelid="UCIGH4PRTgOP7sxRfD_uLfqA"
+           data-layout="default"
+           data-count="default">
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Platform Script -->
+  <script src="https://apis.google.com/js/platform.js"></script>
+
+  <!-- Enhanced Matomo Tracking -->
+  <script>
+    var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//auditory-lab.com/other/matomo/";
+      _paq.push(['setTrackerUrl', u+'matomo.php']);
+      _paq.push(['setSiteId', '1']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const skipAdBtn = document.getElementById('skipAd');
+      const countdownElement = document.getElementById('countdown');
+      const mainVideo = document.getElementById('mainVideo');
+      const subscribeWidget = document.getElementById('subscribeWidget');
+      
+      // Time tracking variables
+      let pageStartTime = Date.now();
+      let videoPlayTime = 0;
+      let videoPauseTime = 0;
+      let isVideoPlaying = false;
+      
+      // Track page visit duration
+      function getTimeSpent() {
+        return Math.round((Date.now() - pageStartTime) / 1000); // in seconds
+      }
+      
+      // Enhanced Matomo tracking functions
+      function trackEvent(category, action, name, value) {
+        if (typeof _paq !== 'undefined') {
+          _paq.push(['trackEvent', category, action, name, value]);
+        }
+      }
+      
+      function trackGoal(goalId, customRevenue) {
+        if (typeof _paq !== 'undefined') {
+          _paq.push(['trackGoal', goalId, customRevenue]);
+        }
+      }
+
+      const videoUrls = [
+        "https://www.youtube.com/embed/X7b-Nc1I2aA?list=PLKvQqxEMw7LW3IeucSPdvwyWYFiLZ-RnD&start=56&autoplay=1&mute=1&enablejsapi=1",
+        "https://www.youtube.com/embed/X7b-Nc1I2aA?list=PLKvQqxEMw7LW3IeucSPdvwyWYFiLZ-RnD&start=436&autoplay=1&mute=1&enablejsapi=1",
+        "https://www.youtube.com/embed/FR0uVa8TUA8?list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&start=121&autoplay=1&mute=1&enablejsapi=1",
+        "https://www.youtube.com/embed/FR0uVa8TUA8?list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&start=273&autoplay=1&mute=1&enablejsapi=1"
+      ];
+
+      const randomIndex = Math.floor(Math.random() * videoUrls.length);
+      mainVideo.src = videoUrls[randomIndex];
+      
+      // Track which video was loaded
+      trackEvent('Video', 'Load', 'Video Index: ' + randomIndex);
+
+      let seconds = 30;
+      countdownElement.textContent = seconds;
+
+      const countdown = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+
+        // Track countdown milestones
+        if (seconds === 20) {
+          trackEvent('Ad Timer', 'Countdown', '20 seconds remaining');
+        } else if (seconds === 10) {
+          trackEvent('Ad Timer', 'Countdown', '10 seconds remaining');
+        } else if (seconds === 5) {
+          trackEvent('Ad Timer', 'Countdown', '5 seconds remaining');
+        }
+
+        if (seconds <= 0) {
+          clearInterval(countdown);
+          skipAdBtn.classList.remove('loading');
+          skipAdBtn.classList.add('active');
+          countdownElement.textContent = 'Ready';
+          
+          // Track when skip ad becomes available
+          trackEvent('Ad Timer', 'Ready', 'Skip Ad Available');
+        }
+      }, 1000);
+
+      // Track Skip Ad button click
+      skipAdBtn.addEventListener('click', function () {
+        if (seconds <= 0) {
+          const timeSpent = getTimeSpent();
+          
+          // Track the skip ad click with time spent
+          trackEvent('Skip Ad', 'Click', 'Button Clicked', timeSpent);
+          trackGoal(1); // You can set up goal ID 1 in Matomo for skip ad clicks
+          
+          window.open('http://www.dreamvortex.co.uk/dvs_saxophone.zip', '_blank');
+
+          const redirectLinks = [
+            'https://www.youtube.com/watch?v=X7b-Nc1I2aA&list=PLKvQqxEMw7LW3IeucSPdvwyWYFiLZ-RnD&t=129s',
+            'https://www.youtube.com/watch?v=FR0uVa8TUA8&list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&t=240s',
+            'https://www.youtube.com/watch?v=X7b-Nc1I2aA&list=PLKvQqxEMw7LW3IeucSPdvwyWYFiLZ-RnD&t=259s',
+            'https://www.youtube.com/watch?v=FR0uVa8TUA8&list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&t=20s'
+          ];
+
+          const randomRedirectIndex = Math.floor(Math.random() * redirectLinks.length);
+          
+          // Track which redirect link was chosen
+          trackEvent('Redirect', 'Link Selected', 'Redirect Index: ' + randomRedirectIndex);
+          
+          window.location.href = redirectLinks[randomRedirectIndex];
+        } else {
+          // Track premature clicks
+          trackEvent('Skip Ad', 'Premature Click', 'Clicked before ready', seconds);
+        }
+      });
+
+      // Track YouTube subscribe button interactions
+      subscribeWidget.addEventListener('click', function(e) {
+        const timeSpent = getTimeSpent();
+        trackEvent('YouTube Subscribe', 'Click', 'Subscribe Widget Clicked', timeSpent);
+        trackGoal(2); // You can set up goal ID 2 in Matomo for subscribe clicks
+      });
+      
+      // Enhanced subscribe button tracking using MutationObserver
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'childList') {
+            // Check if YouTube subscribe button was added to DOM
+            const subscribeButton = document.querySelector('.g-ytsubscribe iframe');
+            if (subscribeButton && !subscribeButton.hasAttribute('data-tracked')) {
+              subscribeButton.setAttribute('data-tracked', 'true');
+              subscribeButton.addEventListener('load', function() {
+                trackEvent('YouTube Subscribe', 'Button Loaded', 'Subscribe button rendered');
+              });
+            }
+          }
+        });
+      });
+      
+      observer.observe(subscribeWidget, { childList: true, subtree: true });
+
+      // Video interaction tracking (simplified approach since we can't directly access YouTube iframe)
+      mainVideo.addEventListener('load', function() {
+        trackEvent('Video', 'Iframe Loaded', 'Main video iframe loaded');
+        isVideoPlaying = true; // Assume autoplay starts the video
+        videoPlayTime = Date.now();
+      });
+      
+      // Track when user interacts with video area
+      const videoWrapper = document.querySelector('.video-wrapper');
+      videoWrapper.addEventListener('click', function() {
+        const timeSpent = getTimeSpent();
+        trackEvent('Video', 'Interaction', 'Video area clicked', timeSpent);
+      });
+      
+      // Track scroll behavior
+      let scrollDepth = 0;
+      let maxScrollDepth = 0;
+      
+      window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+        
+        scrollDepth = Math.round((scrollTop + windowHeight) / docHeight * 100);
+        
+        if (scrollDepth > maxScrollDepth) {
+          maxScrollDepth = scrollDepth;
+          
+          // Track scroll milestones
+          if (maxScrollDepth >= 25 && maxScrollDepth < 50) {
+            trackEvent('Scroll Depth', '25%', 'Page scroll 25%');
+          } else if (maxScrollDepth >= 50 && maxScrollDepth < 75) {
+            trackEvent('Scroll Depth', '50%', 'Page scroll 50%');
+          } else if (maxScrollDepth >= 75 && maxScrollDepth < 90) {
+            trackEvent('Scroll Depth', '75%', 'Page scroll 75%');
+          } else if (maxScrollDepth >= 90) {
+            trackEvent('Scroll Depth', '90%', 'Page scroll 90%');
+          }
+        }
+      });
+      
+      // Track time spent milestones
+      setInterval(function() {
+        const timeSpent = getTimeSpent();
+        
+        if (timeSpent === 30) {
+          trackEvent('Time on Page', '30 seconds', 'User spent 30 seconds');
+        } else if (timeSpent === 60) {
+          trackEvent('Time on Page', '1 minute', 'User spent 1 minute');
+        } else if (timeSpent === 120) {
+          trackEvent('Time on Page', '2 minutes', 'User spent 2 minutes');
+        } else if (timeSpent === 300) {
+          trackEvent('Time on Page', '5 minutes', 'User spent 5 minutes');
+        }
+      }, 1000);
+      
+      // Track page visibility changes (detect when user switches tabs/minimizes)
+      document.addEventListener('visibilitychange', function() {
+        const timeSpent = getTimeSpent();
+        
+        if (document.hidden) {
+          trackEvent('Page Visibility', 'Hidden', 'User left page/tab', timeSpent);
+        } else {
+          trackEvent('Page Visibility', 'Visible', 'User returned to page/tab', timeSpent);
+        }
+      });
+      
+      // Track when user is about to leave the page
+      window.addEventListener('beforeunload', function(e) {
+        const timeSpent = getTimeSpent();
+        trackEvent('Page Exit', 'Before Unload', 'User leaving page', timeSpent);
+        
+        // Send any remaining tracking data
+        if (typeof _paq !== 'undefined') {
+          _paq.push(['trackEvent', 'Session Summary', 'Total Time Spent', 'Total seconds on page', timeSpent]);
+          _paq.push(['trackEvent', 'Session Summary', 'Max Scroll Depth', 'Maximum scroll percentage', maxScrollDepth]);
+        }
+      });
+      
+      // Track page unload
+      window.addEventListener('unload', function() {
+        const timeSpent = getTimeSpent();
+        trackEvent('Page Exit', 'Unload', 'Page unloaded', timeSpent);
+      });
+      
+      // Track mouse leave (when cursor leaves the page)
+      document.addEventListener('mouseleave', function() {
+        const timeSpent = getTimeSpent();
+        trackEvent('Mouse Behavior', 'Leave Page', 'Cursor left page area', timeSpent);
+      });
+      
+      // Track idle behavior
+      let idleTimer;
+      let isIdle = false;
+      
+      function resetIdleTimer() {
+        clearTimeout(idleTimer);
+        if (isIdle) {
+          isIdle = false;
+          trackEvent('User Activity', 'Active', 'User became active again');
+        }
+        
+        idleTimer = setTimeout(function() {
+          isIdle = true;
+          const timeSpent = getTimeSpent();
+          trackEvent('User Activity', 'Idle', 'User idle for 30 seconds', timeSpent);
+        }, 30000); // 30 seconds
+      }
+      
+      // Reset idle timer on user activity
+      ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(event) {
+        document.addEventListener(event, resetIdleTimer, true);
+      });
+      
+      resetIdleTimer();
+
+      // Load hidden videos after delay
+      setTimeout(() => {
+        const hiddenVideos = document.querySelectorAll('.hidden-videos iframe');
+        hiddenVideos.forEach(video => {
+          video.src = video.getAttribute('src');
+        });
+        trackEvent('Hidden Videos', 'Load', 'Hidden videos loaded');
+      }, 5000);
+      
+      // Track initial page load completion
+      trackEvent('Page Load', 'Complete', 'Page fully loaded');
+    });
+  </script>
+</body>
+</html>
