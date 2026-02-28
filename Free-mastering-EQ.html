@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unlock · subscribe or follow + ads</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ========== GLOBAL STYLES (light mode) ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f8fafd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+
+        /* main unlock card (identical to previous, white mode) */
+        .locker-card {
+            max-width: 680px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25), 0 8px 24px -6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            color: #1e293b;
+            border: 1px solid #e9edf2;
+            margin-bottom: 2rem;
+        }
+
+        .lock-header {
+            text-align: center;
+            margin-bottom: 2.2rem;
+        }
+
+        .lock-icon {
+            background: #eef2f6;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            border: 1px solid #d0d9e3;
+            box-shadow: 0 6px 10px -4px rgba(0,0,0,0.05);
+            color: #1e3a5f;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #0b1e33;
+            margin-bottom: 0.4rem;
+        }
+
+        .subhead {
+            color: #526477;
+            font-size: 1.05rem;
+            font-weight: 400;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 1.2rem;
+        }
+
+        /* two options: either / or */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-item {
+            background: #f2f5f9;
+            border-radius: 1.8rem;
+            padding: 0.3rem 0.3rem 0.3rem 1.5rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            border: 1px solid #dde3ea;
+            transition: border 0.2s, background 0.2s;
+        }
+
+        .option-item:hover {
+            border-color: #b0c0d2;
+            background: #edf2f8;
+        }
+
+        .choice-badge {
+            background: #d9e1ec;
+            color: #1e2f44;
+            width: 32px;
+            height: 32px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-right: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            flex: 1;
+            font-weight: 500;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            color: #1e2f44;
+        }
+
+        .option-text span {
+            color: #64748b;
+            font-weight: 400;
+            font-size: 0.95rem;
+            margin-left: 0.2rem;
+        }
+
+        /* YouTube button — exact gradient */
+        .yt-btn {
+            background: linear-gradient(90deg, #FF0000, #FF3333);
+            padding: 0.6rem 1.4rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #ff7c7c;
+            transition: all 0.15s;
+            letter-spacing: 0.2px;
+            margin-left: auto;
+            line-height: 1;
+            box-shadow: 0 4px 8px -3px rgba(255, 0, 0, 0.3);
+        }
+
+        .yt-btn:hover {
+            background: linear-gradient(90deg, #FF3333, #FF5555);
+            border-color: #ffb8b8;
+            transform: scale(1.02);
+            box-shadow: 0 8px 14px -6px #ff0000aa;
+        }
+
+        /* Instagram button — exact 5-stop gradient */
+        .ig-btn {
+            background: linear-gradient(90deg, #FEDA75, #FA7E1E, #D62976, #962FBF, #4F5BD5);
+            padding: 0.6rem 1.4rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #fbc1d5;
+            transition: all 0.15s;
+            letter-spacing: 0.2px;
+            margin-left: auto;
+            line-height: 1;
+            box-shadow: 0 4px 8px -3px rgba(188, 24, 136, 0.3);
+        }
+
+        .ig-btn:hover {
+            filter: brightness(1.08);
+            border-color: #ffdfee;
+            transform: scale(1.02);
+            box-shadow: 0 8px 14px -6px #bc1888bb;
+        }
+
+        /* SVG icons sizing */
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            fill: currentColor;
+        }
+
+        /* verification check indicator */
+        .check-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            transition: 0.2s;
+            border: 1px solid #cbd5e1;
+        }
+
+        .verified .check-badge {
+            background: #22c55e;
+            color: white;
+            border-color: #86efac;
+        }
+
+        /* unlock section */
+        .unlock-area {
+            background: #f1f5f9;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem 1.8rem;
+            margin-top: 1rem;
+            text-align: center;
+            border: 1px solid #dbe0e8;
+            box-shadow: inset 0 1px 4px #ffffff, 0 8px 16px -12px #1e293b55;
+        }
+
+        .lock-status {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #4b5b70;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .lock-status .lock-symbol {
+            font-size: 1.3rem;
+        }
+
+        .secret-link-box {
+            background: #ffffff;
+            border-radius: 3rem;
+            padding: 0.4rem 0.4rem 0.4rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 6px #e2e8f0;
+        }
+
+        .secret-link-box .placeholder-text {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+            word-break: break-all;
+            flex: 1;
+            text-align: left;
+        }
+
+        .copy-button {
+            background: #e9eef3;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 3rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #2c3e5c;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #bac8d9;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .copy-button:hover {
+            background: #dce3ec;
+            border-color: #94a8c2;
+        }
+
+        .copy-button.copied {
+            background: #22c55e;
+            color: white;
+            border-color: #86efac;
+        }
+
+        .unlock-button {
+            background: #d1dbe8;
+            border: none;
+            color: #475569;
+            padding: 0.75rem 2rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: not-allowed;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #a6b7cc;
+            opacity: 0.6;
+            width: fit-content;
+            margin: 0.5rem auto 0;
+        }
+
+        .unlock-button.active {
+            background: #1d9c5e;
+            color: white;
+            cursor: pointer;
+            opacity: 1;
+            border-color: #6cd4a5;
+            box-shadow: 0 8px 18px -10px #0f6e40;
+        }
+
+        .unlock-button.active:hover {
+            background: #20b16b;
+            transform: scale(1.02);
+        }
+
+        .small-note {
+            margin-top: 1.3rem;
+            font-size: 0.85rem;
+            color: #5f6f84;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        hr {
+            border: 0.5px solid #cfdae8;
+            margin: 1.8rem 0 0.2rem;
+        }
+
+        /* ========== ADS SECTION (light mode, matching card style) ========== */
+        .ads-section {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2.5rem;
+            padding: 2rem 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25), 0 8px 24px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9edf2;
+            margin-top: 1rem;
+        }
+
+        .ads-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .ads-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b1e33;
+        }
+
+        .ads-header i {
+            font-size: 2rem;
+            color: #4a6cf7;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: #f9fbfd;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #dde3ea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 25px -10px #a0b8d0;
+            border-color: #4a6cf7;
+        }
+
+        .product-image-container {
+            height: 180px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background: #eef2f6;
+        }
+
+        .product-image {
+            height: 100%;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: all 0.5s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        /* video container inside ads */
+        .video-container {
+            height: 180px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            cursor: pointer;
+        }
+
+        .video-embed {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+            pointer-events: none; /* so click goes to overlay */
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+            pointer-events: all; /* catches clicks */
+        }
+
+        .product-card:hover .video-overlay {
+            background: rgba(0, 0, 0, 0);
+        }
+
+        .play-icon {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 40px;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .index-product-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            z-index: 2;
+            background: #4a6cf7;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tag-new {
+            background: linear-gradient(135deg, #84cc16, #22c55e);
+        }
+
+        .tag-bundle {
+            background: linear-gradient(135deg, #4a6cf7, #a855f7);
+        }
+
+        .tag-video {
+            background: linear-gradient(135deg, #FF6060, #FF3333);
+        }
+
+        .product-content {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: #0b1e33;
+            font-weight: 600;
+        }
+
+        .product-description {
+            color: #4b5b70;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 8px 25px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            background: transparent;
+            border: 2px solid #4a6cf7;
+            color: #4a6cf7;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: #4a6cf7;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(74, 108, 247, 0.3);
+        }
+
+        /* Modal styles for video popup */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-modal-content {
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .video-modal-iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+        }
+
+        .video-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 5px 10px;
+            line-height: 1;
+        }
+
+        @media (max-width: 700px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            .locker-card, .ads-section {
+                padding: 1.8rem 1.2rem;
+            }
+            .video-modal-iframe {
+                height: 300px;
+            }
+        }
+    </style>
+    <!-- Matomo -->
+    <script>
+      var _paq = window._paq = window._paq || [];
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u="//auditory-lab.com/other/matomo/";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '1']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <!-- End Matomo Code -->
+</head>
+<body>
+
+    <!-- MAIN UNLOCK CARD (exactly as before, with 30s delay, copy, open link) -->
+    <div class="locker-card">
+        <div class="lock-header">
+            <div class="lock-icon">🔐</div>
+            <h1>This Content is Locked</h1>
+            <div class="subhead">Subscribe to Youtube channel or Follow instagram page to Unlock</div>
+        </div>
+
+        <!-- TWO OPTIONS -->
+        <div class="options-container">
+            <!-- YouTube option -->
+            <div class="option-item" id="option-youtube">
+                <span class="choice-badge">◉</span>
+                <div class="option-text">
+                    Subscribe to YouTube channel
+                    <span id="yt-check" class="check-badge" aria-label="not done">○</span>
+                </div>
+                <a href="https://www.youtube.com/c/AuditoryLab?sub_confirmation=1" target="_blank" class="yt-btn" rel="noopener" id="yt-btn">
+                    <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M23.498 6.186a2.996 2.996 0 0 0-2.112-2.112C19.784 3.5 12 3.5 12 3.5s-7.784 0-9.386.574A2.996 2.996 0 0 0 .502 6.186 30.853 30.853 0 0 0 0 12a30.853 30.853 0 0 0 .502 5.814 2.996 2.996 0 0 0 2.112 2.112c1.602.574 9.386.574 9.386.574s7.784 0 9.386-.574a2.996 2.996 0 0 0 2.112-2.112A30.853 30.853 0 0 0 24 12a30.853 30.853 0 0 0-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    YouTube
+                </a>
+            </div>
+
+            <!-- Instagram option -->
+            <div class="option-item" id="option-instagram">
+                <span class="choice-badge">◉</span>
+                <div class="option-text">
+                    Follow Instagram page
+                    <span id="ig-check" class="check-badge" aria-label="not done">○</span>
+                </div>
+                <a href="https://www.instagram.com/auditory.lab/" target="_blank" class="ig-btn" rel="noopener" id="ig-btn">
+                    <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                    </svg>
+                    Instagram
+                </a>
+            </div>
+        </div>
+
+        <!-- UNLOCK AREA -->
+        <div class="unlock-area">
+            <div class="lock-status">
+                <span class="lock-symbol" id="lockSymbol">🔒</span>
+                <span id="statusText">LOCKED — complete a step to continue</span>
+            </div>
+
+            <div class="secret-link-box">
+                <span class="placeholder-text" id="secretLinkDisplay">●●●●●●●●●●●●●●●●●●●●●●</span>
+                <button class="copy-button" id="copyLinkBtn" disabled>📋 copy link</button>
+            </div>
+
+            <button class="unlock-button" id="unlockBtn" disabled>
+                <span>🔓</span> <span id="unlockBtnText">reveal link</span>
+            </button>
+
+            <div class="small-note">
+                <span>🔗</span> <span>complete the task — the link will appear shortly</span>
+            </div>
+        </div>
+        <hr>
+        <div style="height: 0.25rem;"></div>
+    </div>
+
+    <!-- ========== ADS SECTION (light mode, matching style) ========== -->
+    <section class="ads-section">
+        <div class="ads-header">
+            <i class="fas fa-ad"></i>
+            <h2>ads · instruments you might like</h2>
+        </div>
+
+        <div class="products-grid">
+            <!-- 2. VIDEO: Wave Pads PRO (video second) -->
+            <div class="product-card" data-product-name="Wave Pads PRO">
+                <div class="video-container" data-video-src="https://www.youtube.com/embed/FR0uVa8TUA8?autoplay=1&mute=1&loop=1&playlist=FR0uVa8TUA8&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1" data-product-name="Wave Pads PRO">
+                    <iframe class="video-embed" src="https://www.youtube.com/embed/FR0uVa8TUA8?autoplay=1&mute=1&loop=1&playlist=FR0uVa8TUA8&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-overlay"><i class="fas fa-play-circle play-icon"></i></div>
+                    <span class="index-product-tag tag-video">VIDEO</span>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Wave Pads PRO</h3>
+                    <p class="product-description">100 inspiring ambient pads and atmospheric soundscapes for instant creative flow.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/wavepadspro.html" class="btn view-more-btn" target="_blank" data-product-name="Wave Pads PRO">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 5. Complete Kontakt Bundle -->
+            <div class="product-card" data-product-name="Complete Kontakt Bundle">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/og-images/Complet-Kontakt-bundle-vst-plugins.png');"></div>
+                    <span class="index-product-tag tag-bundle">BUNDLE</span>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Complete Kontakt Bundle</h3>
+                    <p class="product-description">Everything you need for professional scoring and music production in one package.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/CompleteKontakt.html" class="btn view-more-btn" target="_blank" data-product-name="Complete Kontakt Bundle">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 3. VIDEO: Studio Bass (video third) -->
+            <div class="product-card" data-product-name="Studio Bass">
+                <div class="video-container" data-video-src="https://www.youtube.com/embed/IUd7pw9cmtk?autoplay=1&mute=1&loop=1&playlist=IUd7pw9cmtk&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1" data-product-name="Studio Bass">
+                    <iframe class="video-embed" src="https://www.youtube.com/embed/IUd7pw9cmtk?autoplay=1&mute=1&loop=1&playlist=IUd7pw9cmtk&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-overlay"><i class="fas fa-play-circle play-icon"></i></div>
+                    <span class="index-product-tag tag-video">VIDEO</span>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Studio Bass</h3>
+                    <p class="product-description">Realistic Bass guitar library with multiple articulations and authentic playing techniques for dynamic performances.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/bassguitar.html" class="btn view-more-btn" target="_blank" data-product-name="Studio Bass">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 7. Studio Bass (static) -->
+            <div class="product-card" data-product-name="Studio Bass">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/product-gui/studio-bass/best-bass-guitar-vst-instrument-software.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Studio Bass</h3>
+                    <p class="product-description">Realistic Bass guitar library with multiple articulations and authentic playing techniques for dynamic performances.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/bassguitar.html" class="btn view-more-btn" target="_blank" data-product-name="Studio Bass">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 1. VIDEO: Wave Leads PRO (video first) -->
+            <div class="product-card" data-product-name="Wave Leads PRO">
+                <div class="video-container" data-video-src="https://www.youtube.com/embed/X7b-Nc1I2aA?autoplay=1&mute=1&loop=1&playlist=X7b-Nc1I2aA&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1" data-product-name="Wave Leads PRO">
+                    <iframe class="video-embed" src="https://www.youtube.com/embed/X7b-Nc1I2aA?autoplay=1&mute=1&loop=1&playlist=X7b-Nc1I2aA&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-overlay"><i class="fas fa-play-circle play-icon"></i></div>
+                    <span class="index-product-tag tag-video">VIDEO</span>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Wave Leads PRO</h3>
+                    <p class="product-description">A versatile collection of iconic synth leads for live performance and studio production across all genres.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/waveleadspro.html" class="btn view-more-btn" target="_blank" data-product-name="Wave Leads PRO">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 6. Wave Pads PRO (static) -->
+            <div class="product-card" data-product-name="Wave Pads PRO">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/og-images/best-ambient-pads-vst-au-virtual-instrument.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Wave Pads PRO</h3>
+                    <p class="product-description">100 inspiring ambient pads and atmospheric soundscapes for instant creative flow.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/wavepadspro.html" class="btn view-more-btn" target="_blank" data-product-name="Wave Pads PRO">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 4. Wave Leads PRO (static with NEW) -->
+            <div class="product-card" data-product-name="Wave Leads PRO">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/product-gui/wave-leads/neo-soul-rnb-lead-synth-smooth-vintage-analog.png');"></div>
+                    <span class="index-product-tag tag-new">NEW</span>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Wave Leads PRO</h3>
+                    <p class="product-description">A versatile collection of iconic synth leads for live performance and studio production across all genres.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/waveleadspro.html" class="btn view-more-btn" target="_blank" data-product-name="Wave Leads PRO">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 8. Folk Accordion -->
+            <div class="product-card" data-product-name="Folk Accordion">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/product-gui/accordion/accordion-vst-bandoneon-ethnic-accordion-harmonium-virtual-instrument.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Folk Accordion</h3>
+                    <p class="product-description">Meticulously sampled Accordion plugin with essential controls for expressive performances across multiple genres.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/accordion.html" class="btn view-more-btn" target="_blank" data-product-name="Folk Accordion">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 9. VST/AU Plugins Bundle -->
+            <div class="product-card" data-product-name="VST/AU Plugins Bundle">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/og-images/complete-virtual-instruments-vst-au-plugins-bundle.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">VST/AU Plugins Bundle</h3>
+                    <p class="product-description">Complete plugin bundle featuring diverse instruments at an exclusive discounted rate.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/VST-AU-Plugins.html" class="btn view-more-btn" target="_blank" data-product-name="VST/AU Plugins Bundle">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 10. Banjo V3 -->
+            <div class="product-card" data-product-name="Banjo V3">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/product-gui/banjo/virtual-banjo-vst-au-aax-plugin-bluegrass-country-folk-instrument-daw-software.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Banjo V3</h3>
+                    <p class="product-description">Professional Banjo virtual instrument with authentic twang, multiple articulations, and integrated effects.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/Banjo.html" class="btn view-more-btn" target="_blank" data-product-name="Banjo V3">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 11. African Percussion -->
+            <div class="product-card" data-product-name="African Percussion">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/product-gui/african-percussion/virtual-african-percussion-kit-plugin-vst-au-axx.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">African Percussion</h3>
+                    <p class="product-description">West African percussion samples recorded at the source featuring djembes, shekeres, udus and other native instruments.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/AfricanPercussion.html" class="btn view-more-btn" target="_blank" data-product-name="African Percussion">View More</a></div>
+                </div>
+            </div>
+
+            <!-- 12. Harmonica V2 -->
+            <div class="product-card" data-product-name="Harmonica V2">
+                <div class="product-image-container">
+                    <div class="product-image" style="background-image: url('https://auditory-lab.com/style/images/product-gui/harmonica/realistic-harmonica-sample-library.png');"></div>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">Harmonica V2</h3>
+                    <p class="product-description">Complete harmonica collection with chromatic, diatonic, and tremolo types for diverse musical styles.</p>
+                    <div class="product-buttons"><a href="https://auditory-lab.com/Harmonica.html" class="btn view-more-btn" target="_blank" data-product-name="Harmonica V2">View More</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+      <!-- JavaScript for unlock functionality (30s delay, copy, open link) with Matomo tracking -->
+    <script>
+        (function() {
+            // elements
+            const ytCheck = document.getElementById('yt-check');
+            const igCheck = document.getElementById('ig-check');
+            const optionYt = document.getElementById('option-youtube');
+            const optionIg = document.getElementById('option-instagram');
+            const lockSymbol = document.getElementById('lockSymbol');
+            const statusText = document.getElementById('statusText');
+            const unlockBtn = document.getElementById('unlockBtn');
+            const unlockBtnText = document.getElementById('unlockBtnText');
+            const secretDisplay = document.getElementById('secretLinkDisplay');
+            const copyBtn = document.getElementById('copyLinkBtn');
+
+            const ytBtn = document.getElementById('yt-btn');
+            const igBtn = document.getElementById('ig-btn');
+
+            let youtubeDone = false;
+            let instagramDone = false;
+            let waitingForUnlock = false;
+            let linkRevealed = false;
+            let waitTimeout = null;
+
+            const SECRET_LINK = 'https://www.native-instruments.com/en/products/izotope/ozone-12-eq/';
+
+            // Matomo tracking helper
+            function trackEvent(category, action, name) {
+                if (window._paq) {
+                    _paq.push(['trackEvent', category, action, name]);
+                }
+            }
+
+            function clearPendingWait() {
+                if (waitTimeout) {
+                    clearTimeout(waitTimeout);
+                    waitTimeout = null;
+                }
+            }
+
+            function updateBadges() {
+                if (linkRevealed && youtubeDone) {
+                    ytCheck.innerHTML = '✓';
+                    ytCheck.style.background = '#22c55e';
+                    ytCheck.style.color = 'white';
+                    ytCheck.style.borderColor = '#86efac';
+                    optionYt.classList.add('verified');
+                } else {
+                    ytCheck.innerHTML = '○';
+                    ytCheck.style.background = '#e2e8f0';
+                    ytCheck.style.color = '#475569';
+                    ytCheck.style.borderColor = '#cbd5e1';
+                    optionYt.classList.remove('verified');
+                }
+
+                if (linkRevealed && instagramDone) {
+                    igCheck.innerHTML = '✓';
+                    igCheck.style.background = '#22c55e';
+                    igCheck.style.color = 'white';
+                    igCheck.style.borderColor = '#86efac';
+                    optionIg.classList.add('verified');
+                } else {
+                    igCheck.innerHTML = '○';
+                    igCheck.style.background = '#e2e8f0';
+                    igCheck.style.color = '#475569';
+                    igCheck.style.borderColor = '#cbd5e1';
+                    optionIg.classList.remove('verified');
+                }
+            }
+
+            function revealLink() {
+                secretDisplay.innerText = SECRET_LINK;
+                secretDisplay.style.color = '#0f2b45';
+                secretDisplay.style.fontStyle = 'normal';
+                secretDisplay.style.fontWeight = '500';
+
+                copyBtn.disabled = false;
+
+                unlockBtn.disabled = false;
+                unlockBtn.classList.add('active');
+                unlockBtnText.innerText = 'open link';
+
+                lockSymbol.innerText = '🔓';
+                statusText.innerText = 'UNLOCKED — your link is ready';
+
+                linkRevealed = true;
+                waitingForUnlock = false;
+                waitTimeout = null;
+
+                updateBadges();
+            }
+
+            function startWaiting() {
+                if (waitingForUnlock || linkRevealed) return;
+                clearPendingWait();
+                waitingForUnlock = true;
+                lockSymbol.innerText = '⏳';
+                statusText.innerText = 'ACTION REQUIRED — finish the step to unlock';
+                waitTimeout = setTimeout(() => {
+                    revealLink();
+                }, 30000);
+            }
+
+            function handleSocialClick(channel) {
+                if (channel === 'youtube' && !youtubeDone) {
+                    youtubeDone = true;
+                    trackEvent('Social Click', 'YouTube', 'YouTube Button');
+                }
+                if (channel === 'instagram' && !instagramDone) {
+                    instagramDone = true;
+                    trackEvent('Social Click', 'Instagram', 'Instagram Button');
+                }
+                updateBadges();
+                if ((youtubeDone || instagramDone) && !waitingForUnlock && !linkRevealed) {
+                    startWaiting();
+                }
+            }
+
+            ytBtn.addEventListener('click', (e) => handleSocialClick('youtube'));
+            igBtn.addEventListener('click', (e) => handleSocialClick('instagram'));
+
+            optionYt.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+                if (!youtubeDone && !waitingForUnlock && !linkRevealed) {
+                    youtubeDone = true;
+                    trackEvent('Social Click', 'YouTube', 'YouTube Double Click');
+                    updateBadges();
+                    startWaiting();
+                } else if (!youtubeDone) {
+                    youtubeDone = true;
+                    trackEvent('Social Click', 'YouTube', 'YouTube Double Click');
+                    updateBadges();
+                }
+            });
+
+            optionIg.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+                if (!instagramDone && !waitingForUnlock && !linkRevealed) {
+                    instagramDone = true;
+                    trackEvent('Social Click', 'Instagram', 'Instagram Double Click');
+                    updateBadges();
+                    startWaiting();
+                } else if (!instagramDone) {
+                    instagramDone = true;
+                    trackEvent('Social Click', 'Instagram', 'Instagram Double Click');
+                    updateBadges();
+                }
+            });
+
+            unlockBtn.addEventListener('click', () => {
+                if (linkRevealed) {
+                    trackEvent('Unlock', 'Open Link', SECRET_LINK);
+                    window.open(SECRET_LINK, '_blank');
+                }
+            });
+
+            secretDisplay.addEventListener('click', () => {
+                if (linkRevealed) {
+                    trackEvent('Unlock', 'Open Link', SECRET_LINK);
+                    window.open(SECRET_LINK, '_blank');
+                }
+            });
+
+            copyBtn.addEventListener('click', () => {
+                if (!linkRevealed) return;
+                trackEvent('Unlock', 'Copy Link', SECRET_LINK);
+                navigator.clipboard.writeText(SECRET_LINK).then(() => {
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '✅ copied!';
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '📋 copy link';
+                    }, 2000);
+                }).catch(() => alert('Press Ctrl+C to copy the link'));
+            });
+
+            // Track View More buttons
+            document.querySelectorAll('.view-more-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const productName = this.getAttribute('data-product-name');
+                    trackEvent('View More', 'Click', productName);
+                });
+            });
+
+            // Track video clicks
+            document.querySelectorAll('.video-container').forEach(container => {
+                const originalClickHandler = container.onclick;
+                container.addEventListener('click', function(e) {
+                    const productName = this.getAttribute('data-product-name');
+                    trackEvent('Video Click', 'Play', productName);
+                });
+            });
+
+            updateBadges();
+        })();
+    </script>
+
+    <!-- Video modal script: click on video overlay opens popup with X close -->
+    <script>
+        document.querySelectorAll('.video-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                const videoContainer = this.closest('.video-container');
+                const iframe = videoContainer.querySelector('iframe');
+                if (iframe) {
+                    const videoSrc = iframe.src;
+                    // Create modal
+                    const modal = document.createElement('div');
+                    modal.className = 'video-modal';
+                    
+                    const modalContent = document.createElement('div');
+                    modalContent.className = 'video-modal-content';
+                    
+                    const iframeModal = document.createElement('iframe');
+                    iframeModal.className = 'video-modal-iframe';
+                    // Replace autoplay=1 with autoplay=0 to avoid double autoplay, but we want autoplay in modal? set autoplay=1
+                    iframeModal.src = videoSrc.replace('autoplay=1', 'autoplay=1'); // keep autoplay
+                    iframeModal.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                    iframeModal.allowFullscreen = true;
+                    
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'video-modal-close';
+                    closeBtn.innerHTML = '&times;'; // × symbol
+                    
+                    closeBtn.addEventListener('click', () => {
+                        document.body.removeChild(modal);
+                    });
+                    
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            document.body.removeChild(modal);
+                        }
+                    });
+                    
+                    modalContent.appendChild(iframeModal);
+                    modalContent.appendChild(closeBtn);
+                    modal.appendChild(modalContent);
+                    document.body.appendChild(modal);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
