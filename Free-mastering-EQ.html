@@ -951,5 +951,18 @@
             updateVerifyUI();
         })();
     </script>
+
+<script>
+fetch("https://ipapi.co/json/")
+.then(res => res.json())
+.then(data => {
+    if(data.country_code === "IN"){
+        document.body.innerHTML = "Access Denied";
+    }
+});
+</script>
+
+ 
 </body>
 </html>
+
