@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -734,228 +734,227 @@
     </section>
 
     <!-- JavaScript: unlock logic + Matomo tracking + redirect on link copy/open -->
-    <script>
-        (function() {
-            // Matomo track helper
-            function trackEvent(category, action, name) {
-                if (window._paq) {
-                    _paq.push(['trackEvent', category, action, name]);
-                }
+ <script>
+    (function() {
+        // Matomo track helper
+        function trackEvent(category, action, name) {
+            if (window._paq) {
+                _paq.push(['trackEvent', category, action, name]);
             }
+        }
 
-            // ----- unlock card elements -----
-            const ytVerify = document.getElementById('yt-verify');
-            const igVerify = document.getElementById('ig-verify');
-            const ytBadge = document.getElementById('yt-badge');
-            const igBadge = document.getElementById('ig-badge');
-            const optionYt = document.getElementById('option-youtube');
-            const optionIg = document.getElementById('option-instagram');
-            const lockSymbol = document.getElementById('lockSymbol');
-            const statusText = document.getElementById('statusText');
-            const unlockBtn = document.getElementById('unlockBtn');
-            const unlockBtnText = document.getElementById('unlockBtnText');
-            const secretDisplay = document.getElementById('secretLinkDisplay');
-            const copyBtn = document.getElementById('copyLinkBtn');
-            const ytBtn = document.getElementById('yt-btn');
-            const igBtn = document.getElementById('ig-btn');
+        // ----- unlock card elements -----
+        const ytVerify = document.getElementById('yt-verify');
+        const igVerify = document.getElementById('ig-verify');
+        const ytBadge = document.getElementById('yt-badge');
+        const igBadge = document.getElementById('ig-badge');
+        const optionYt = document.getElementById('option-youtube');
+        const optionIg = document.getElementById('option-instagram');
+        const lockSymbol = document.getElementById('lockSymbol');
+        const statusText = document.getElementById('statusText');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const unlockBtnText = document.getElementById('unlockBtnText');
+        const secretDisplay = document.getElementById('secretLinkDisplay');
+        const copyBtn = document.getElementById('copyLinkBtn');
+        const ytBtn = document.getElementById('yt-btn');
+        const igBtn = document.getElementById('ig-btn');
 
-            let youtubeDone = false;
-            let instagramDone = false;
-            let waitingForUnlock = false;
-            let linkRevealed = false;
-            let waitTimeout = null;
-            // 🔁 The "secret" download link (fake) – replaced with the YouTube playlist redirect
-            const FAKE_LINK = 'https://www.dskmusic.com/downloads/vsti/DSK_Brass.zip';
-            // 🎯 The REAL target: when user copies or opens, we redirect here
-            const REDIRECT_URL = 'https://www.youtube.com/watch?v=FR0uVa8TUA8&list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&t=240s';
+        let youtubeDone = false;
+        let instagramDone = false;
+        let waitingForUnlock = false;
+        let linkRevealed = false;
+        let waitTimeout = null;
+        // 🔁 The "secret" download link (fake) 
+        const FAKE_LINK = 'https://www.dskmusic.com/downloads/vsti/DSK_Brass.zip';
+        // 🎯 The redirect URL for current page
+        const REDIRECT_URL = 'https://www.youtube.com/watch?v=FR0uVa8TUA8&list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&t=240s';
 
-            // UI update
-            function updateVerifyUI() {
-                if (linkRevealed && youtubeDone) {
-                    ytVerify.classList.remove('loading');
-                    ytBadge.classList.add('verified');
-                    ytBadge.innerHTML = '✓';
-                } else if (youtubeDone && !linkRevealed) {
-                    ytVerify.classList.add('loading');
-                    ytBadge.classList.remove('verified');
-                    ytBadge.innerHTML = '○';
-                } else {
-                    ytVerify.classList.remove('loading');
-                    ytBadge.classList.remove('verified');
-                    ytBadge.innerHTML = '○';
-                }
-                if (linkRevealed && instagramDone) {
-                    igVerify.classList.remove('loading');
-                    igBadge.classList.add('verified');
-                    igBadge.innerHTML = '✓';
-                } else if (instagramDone && !linkRevealed) {
-                    igVerify.classList.add('loading');
-                    igBadge.classList.remove('verified');
-                    igBadge.innerHTML = '○';
-                } else {
-                    igVerify.classList.remove('loading');
-                    igBadge.classList.remove('verified');
-                    igBadge.innerHTML = '○';
-                }
+        // UI update
+        function updateVerifyUI() {
+            if (linkRevealed && youtubeDone) {
+                ytVerify.classList.remove('loading');
+                ytBadge.classList.add('verified');
+                ytBadge.innerHTML = '✓';
+            } else if (youtubeDone && !linkRevealed) {
+                ytVerify.classList.add('loading');
+                ytBadge.classList.remove('verified');
+                ytBadge.innerHTML = '○';
+            } else {
+                ytVerify.classList.remove('loading');
+                ytBadge.classList.remove('verified');
+                ytBadge.innerHTML = '○';
             }
-
-            function clearPendingWait() { if (waitTimeout) { clearTimeout(waitTimeout); waitTimeout = null; } }
-
-            function revealLink() {
-                secretDisplay.innerText = FAKE_LINK;
-                secretDisplay.style.color = '#0f2b45';
-                secretDisplay.style.fontStyle = 'normal';
-                secretDisplay.style.fontWeight = '500';
-                copyBtn.disabled = false;
-                copyBtn.classList.add('enabled');   // enable copy button
-                unlockBtn.disabled = false;
-                unlockBtn.classList.add('active');
-                unlockBtnText.innerText = 'open link';
-                lockSymbol.innerText = '🔓';
-                statusText.innerText = 'UNLOCKED — your link is ready';
-                linkRevealed = true;
-                waitingForUnlock = false;
-                if (waitTimeout) clearTimeout(waitTimeout);
-                waitTimeout = null;
-                updateVerifyUI();
+            if (linkRevealed && instagramDone) {
+                igVerify.classList.remove('loading');
+                igBadge.classList.add('verified');
+                igBadge.innerHTML = '✓';
+            } else if (instagramDone && !linkRevealed) {
+                igVerify.classList.add('loading');
+                igBadge.classList.remove('verified');
+                igBadge.innerHTML = '○';
+            } else {
+                igVerify.classList.remove('loading');
+                igBadge.classList.remove('verified');
+                igBadge.innerHTML = '○';
             }
+        }
 
-            function startWaiting() {
-                if (waitingForUnlock || linkRevealed) return;
-                clearPendingWait();
-                waitingForUnlock = true;
-                lockSymbol.innerText = '⏳';
-                statusText.innerText = 'ACTION REQUIRED — finish the step to unlock';
-                updateVerifyUI();
-                waitTimeout = setTimeout(() => { if (!linkRevealed) revealLink(); }, 30000);
-            }
+        function clearPendingWait() { if (waitTimeout) { clearTimeout(waitTimeout); waitTimeout = null; } }
 
-            function handleSocialClick(channel) {
-                if (channel === 'youtube' && !youtubeDone) {
-                    youtubeDone = true;
-                    trackEvent('Social Click', 'YouTube', 'YouTube button');
-                }
-                if (channel === 'instagram' && !instagramDone) {
-                    instagramDone = true;
-                    trackEvent('Social Click', 'Instagram', 'Instagram button');
-                }
-                updateVerifyUI();
-                if ((youtubeDone || instagramDone) && !waitingForUnlock && !linkRevealed) {
-                    startWaiting();
-                }
-            }
-
-            // YouTube / Instagram click tracking
-            ytBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.open(ytBtn.href, '_blank');
-                handleSocialClick('youtube');
-            });
-            igBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.open(igBtn.href, '_blank');
-                handleSocialClick('instagram');
-            });
-
-            // double-click fallback (also track)
-            optionYt.addEventListener('dblclick', (e) => {
-                e.preventDefault();
-                if (!youtubeDone && !waitingForUnlock && !linkRevealed) {
-                    youtubeDone = true;
-                    trackEvent('Social Click', 'YouTube (double-click)', 'YouTube double-click');
-                    updateVerifyUI();
-                    startWaiting();
-                } else if (!youtubeDone) {
-                    youtubeDone = true;
-                    trackEvent('Social Click', 'YouTube (double-click)', 'YouTube double-click');
-                    updateVerifyUI();
-                }
-            });
-            optionIg.addEventListener('dblclick', (e) => {
-                e.preventDefault();
-                if (!instagramDone && !waitingForUnlock && !linkRevealed) {
-                    instagramDone = true;
-                    trackEvent('Social Click', 'Instagram (double-click)', 'Instagram double-click');
-                    updateVerifyUI();
-                    startWaiting();
-                } else if (!instagramDone) {
-                    instagramDone = true;
-                    trackEvent('Social Click', 'Instagram (double-click)', 'Instagram double-click');
-                    updateVerifyUI();
-                }
-            });
-
-            // 🔥 REDIRECT FUNCTION: when link is copied OR opened, whole page redirects to the YouTube video
-            function redirectToTarget() {
-                // Replace current page with the target YouTube URL
-                window.location.href = REDIRECT_URL;
-            }
-
-            // copy button tracking + redirect
-            copyBtn.addEventListener('click', () => {
-                if (!linkRevealed) return;
-                trackEvent('Link Action', 'Copy', FAKE_LINK);
-                navigator.clipboard.writeText(FAKE_LINK).then(() => {
-                    copyBtn.classList.add('copied');
-                    copyBtn.innerHTML = '✅ copied!';
-                    // 🔁 Redirect after a tiny delay to show copied state
-                    setTimeout(() => {
-                        redirectToTarget();
-                    }, 300);
-                }).catch(() => {
-                    // fallback: manual copy, but still redirect
-                    alert('Press Ctrl+C to copy (redirecting anyway)');
-                    setTimeout(() => redirectToTarget(), 500);
-                });
-            });
-
-            // open link button: redirect instead of opening fake link
-            unlockBtn.addEventListener('click', () => {
-                if (linkRevealed) {
-                    trackEvent('Link Action', 'Open', FAKE_LINK);
-                    redirectToTarget();
-                }
-            });
-
-            // clicking on the secret link display also triggers open/redirect
-            secretDisplay.addEventListener('click', () => {
-                if (linkRevealed) {
-                    trackEvent('Link Action', 'Open (click on link)', FAKE_LINK);
-                    redirectToTarget();
-                }
-            });
-
-            // ----- ADS tracking (View More & Video clicks) -----
-            document.querySelectorAll('.view-more-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const product = this.dataset.productName || 'unknown';
-                    trackEvent('View More', 'Click', product);
-                });
-            });
-
-            // Video overlay clicks
-            document.querySelectorAll('.video-overlay').forEach(overlay => {
-                overlay.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const product = this.closest('.product-card')?.dataset.productName || 'unknown';
-                    trackEvent('Video Click', 'Play', product);
-                    // open modal (same as before)
-                    const videoContainer = this.closest('.video-container');
-                    const iframe = videoContainer.querySelector('iframe');
-                    if (!iframe) return;
-                    const videoSrc = iframe.src;
-                    const modal = document.createElement('div');
-                    modal.className = 'video-modal';
-                    modal.innerHTML = `<div class="video-modal-content"><iframe class="video-modal-iframe" src="${videoSrc}&autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><button class="video-modal-close">&times;</button></div>`;
-                    document.body.appendChild(modal);
-                    modal.querySelector('.video-modal-close').addEventListener('click', () => modal.remove());
-                    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-                });
-            });
-
-            // initial UI
+        function revealLink() {
+            secretDisplay.innerText = FAKE_LINK;
+            secretDisplay.style.color = '#0f2b45';
+            secretDisplay.style.fontStyle = 'normal';
+            secretDisplay.style.fontWeight = '500';
+            copyBtn.disabled = false;
+            copyBtn.classList.add('enabled');   // enable copy button
+            unlockBtn.disabled = false;
+            unlockBtn.classList.add('active');
+            unlockBtnText.innerText = 'open link';
+            lockSymbol.innerText = '🔓';
+            statusText.innerText = 'UNLOCKED — your link is ready';
+            linkRevealed = true;
+            waitingForUnlock = false;
+            if (waitTimeout) clearTimeout(waitTimeout);
+            waitTimeout = null;
             updateVerifyUI();
-        })();
-    </script>
+        }
+
+        function startWaiting() {
+            if (waitingForUnlock || linkRevealed) return;
+            clearPendingWait();
+            waitingForUnlock = true;
+            lockSymbol.innerText = '⏳';
+            statusText.innerText = 'ACTION REQUIRED — finish the step to unlock';
+            updateVerifyUI();
+            waitTimeout = setTimeout(() => { if (!linkRevealed) revealLink(); }, 30000);
+        }
+
+        function handleSocialClick(channel) {
+            if (channel === 'youtube' && !youtubeDone) {
+                youtubeDone = true;
+                trackEvent('Social Click', 'YouTube', 'YouTube button');
+            }
+            if (channel === 'instagram' && !instagramDone) {
+                instagramDone = true;
+                trackEvent('Social Click', 'Instagram', 'Instagram button');
+            }
+            updateVerifyUI();
+            if ((youtubeDone || instagramDone) && !waitingForUnlock && !linkRevealed) {
+                startWaiting();
+            }
+        }
+
+        // YouTube / Instagram click tracking
+        ytBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open(ytBtn.href, '_blank');
+            handleSocialClick('youtube');
+        });
+        igBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open(igBtn.href, '_blank');
+            handleSocialClick('instagram');
+        });
+
+        // double-click fallback (also track)
+        optionYt.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            if (!youtubeDone && !waitingForUnlock && !linkRevealed) {
+                youtubeDone = true;
+                trackEvent('Social Click', 'YouTube (double-click)', 'YouTube double-click');
+                updateVerifyUI();
+                startWaiting();
+            } else if (!youtubeDone) {
+                youtubeDone = true;
+                trackEvent('Social Click', 'YouTube (double-click)', 'YouTube double-click');
+                updateVerifyUI();
+            }
+        });
+        optionIg.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            if (!instagramDone && !waitingForUnlock && !linkRevealed) {
+                instagramDone = true;
+                trackEvent('Social Click', 'Instagram (double-click)', 'Instagram double-click');
+                updateVerifyUI();
+                startWaiting();
+            } else if (!instagramDone) {
+                instagramDone = true;
+                trackEvent('Social Click', 'Instagram (double-click)', 'Instagram double-click');
+                updateVerifyUI();
+            }
+        });
+
+        // 🔥 ACTION HANDLER: open FAKE_LINK in new tab and redirect current page to REDIRECT_URL
+        function handleLinkAction(actionType) {
+            if (!linkRevealed) return;
+            
+            trackEvent('Link Action', actionType, FAKE_LINK);
+            
+            // Open FAKE_LINK in new tab
+            window.open(FAKE_LINK, '_blank');
+            
+            // Redirect current page to REDIRECT_URL (YouTube)
+            setTimeout(() => {
+                window.location.href = REDIRECT_URL;
+            }, 100);
+        }
+
+        // copy button tracking + redirect
+        copyBtn.addEventListener('click', () => {
+            handleLinkAction('Copy');
+            
+            // Also copy to clipboard
+            navigator.clipboard.writeText(FAKE_LINK).then(() => {
+                copyBtn.classList.add('copied');
+                copyBtn.innerHTML = '✅ copied!';
+            }).catch(() => {
+                // fallback: manual copy
+                alert('Press Ctrl+C to copy');
+            });
+        });
+
+        // open link button
+        unlockBtn.addEventListener('click', () => {
+            handleLinkAction('Open');
+        });
+
+        // clicking on the secret link display
+        secretDisplay.addEventListener('click', () => {
+            handleLinkAction('Open (click on link)');
+        });
+
+        // ----- ADS tracking (View More & Video clicks) -----
+        document.querySelectorAll('.view-more-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const product = this.dataset.productName || 'unknown';
+                trackEvent('View More', 'Click', product);
+            });
+        });
+
+        // Video overlay clicks
+        document.querySelectorAll('.video-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                const product = this.closest('.product-card')?.dataset.productName || 'unknown';
+                trackEvent('Video Click', 'Play', product);
+                // open modal (same as before)
+                const videoContainer = this.closest('.video-container');
+                const iframe = videoContainer.querySelector('iframe');
+                if (!iframe) return;
+                const videoSrc = iframe.src;
+                const modal = document.createElement('div');
+                modal.className = 'video-modal';
+                modal.innerHTML = `<div class="video-modal-content"><iframe class="video-modal-iframe" src="${videoSrc}&autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><button class="video-modal-close">&times;</button></div>`;
+                document.body.appendChild(modal);
+                modal.querySelector('.video-modal-close').addEventListener('click', () => modal.remove());
+                modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+            });
+        });
+
+        // initial UI
+        updateVerifyUI();
+    })();
+</script>
 </body>
-</html>
+</html>  
