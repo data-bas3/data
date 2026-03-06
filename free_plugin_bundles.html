@@ -734,7 +734,7 @@
     </section>
 
     <!-- JavaScript: unlock logic + Matomo tracking + redirect on link copy/open -->
-    <script>
+       <script>
         (function() {
             // Matomo track helper
             function trackEvent(category, action, name) {
@@ -764,10 +764,11 @@
             let waitingForUnlock = false;
             let linkRevealed = false;
             let waitTimeout = null;
-            // 🔁 The "secret" download link (fake) – replaced with the YouTube playlist redirect
-            const FAKE_LINK = 'https://www.waves.com/bundles/free-plugin-pack';
-            // 🎯 The REAL target: when user copies or opens, we redirect here
-            const REDIRECT_URL = 'https://www.youtube.com/watch?v=FR0uVa8TUA8&list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&t=240s';
+            
+            // 🔁 The display link (shown to user)
+            const DISPLAY_LINK = 'https://www.waves.com/bundles/free-plugin-pack';
+            // 🎯 The YouTube link to open in new window
+            const YOUTUBE_LINK = 'https://www.youtube.com/watch?v=FR0uVa8TUA8&list=PLKvQqxEMw7LVKNyv99GQv6Qf1RQhrXO75&t=240s';
 
             // UI update
             function updateVerifyUI() {
@@ -802,7 +803,7 @@
             function clearPendingWait() { if (waitTimeout) { clearTimeout(waitTimeout); waitTimeout = null; } }
 
             function revealLink() {
-                secretDisplay.innerText = FAKE_LINK;
+                secretDisplay.innerText = DISPLAY_LINK;
                 secretDisplay.style.color = '#0f2b45';
                 secretDisplay.style.fontStyle = 'normal';
                 secretDisplay.style.fontWeight = '500';
@@ -885,43 +886,51 @@
                 }
             });
 
-            // 🔥 REDIRECT FUNCTION: when link is copied OR opened, whole page redirects to the YouTube video
-            function redirectToTarget() {
-                // Replace current page with the target YouTube URL
-                window.location.href = REDIRECT_URL;
+            // 🔥 ACTION HANDLER: When link is copied OR opened
+            function handleLinkAction(actionType) {
+                if (!linkRevealed) return;
+                
+                // Track the action
+                trackEvent('Link Action', actionType, DISPLAY_LINK);
+                
+                // 1. Redirect current page to Waves link
+                window.location.href = DISPLAY_LINK;
+                
+                // 2. Open YouTube link in new window/tab
+                window.open(YOUTUBE_LINK, '_blank');
             }
 
-            // copy button tracking + redirect
+            // copy button click
             copyBtn.addEventListener('click', () => {
                 if (!linkRevealed) return;
-                trackEvent('Link Action', 'Copy', FAKE_LINK);
-                navigator.clipboard.writeText(FAKE_LINK).then(() => {
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(DISPLAY_LINK).then(() => {
                     copyBtn.classList.add('copied');
                     copyBtn.innerHTML = '✅ copied!';
-                    // 🔁 Redirect after a tiny delay to show copied state
+                    
+                    // Handle both actions after a tiny delay
                     setTimeout(() => {
-                        redirectToTarget();
+                        handleLinkAction('Copy');
                     }, 300);
                 }).catch(() => {
-                    // fallback: manual copy, but still redirect
+                    // Fallback for clipboard errors
                     alert('Press Ctrl+C to copy (redirecting anyway)');
-                    setTimeout(() => redirectToTarget(), 500);
+                    setTimeout(() => handleLinkAction('Copy'), 500);
                 });
             });
 
-            // open link button: redirect instead of opening fake link
+            // open link button click
             unlockBtn.addEventListener('click', () => {
                 if (linkRevealed) {
-                    trackEvent('Link Action', 'Open', FAKE_LINK);
-                    redirectToTarget();
+                    handleLinkAction('Open');
                 }
             });
 
-            // clicking on the secret link display also triggers open/redirect
+            // clicking on the secret link display
             secretDisplay.addEventListener('click', () => {
                 if (linkRevealed) {
-                    trackEvent('Link Action', 'Open (click on link)', FAKE_LINK);
-                    redirectToTarget();
+                    handleLinkAction('Open (click on link)');
                 }
             });
 
