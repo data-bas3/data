@@ -1,384 +1,77 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Kuassa Downloads | Audio Plugin Installers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Links</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #0a0f1e;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 2rem 1.5rem;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 50px;
         }
-
-        /* --- BACKGROUND YOUTUBE EMBEDS (hidden, only for view count) --- */
-        .youtube-background {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-            z-index: -100;
-            overflow: hidden;
-        }
-
-        .youtube-background iframe {
-            width: 1px;
-            height: 1px;
-            border: none;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* subtle animated gradient overlay */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(30, 40, 60, 0.7), rgba(8, 12, 24, 0.95));
-            z-index: -2;
-        }
-
-        /* main card container */
-        .card {
-            max-width: 780px;
-            width: 100%;
-            background: rgba(18, 25, 45, 0.85);
-            backdrop-filter: blur(14px);
-            border-radius: 48px;
-            padding: 2.5rem 2rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
         h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #FFFFFF, #C0D4FF);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.3px;
+            color: #333;
         }
-
-        .sub {
-            color: #9aaec9;
-            margin-bottom: 2rem;
-            font-size: 1rem;
-            border-left: 3px solid #3b82f6;
-            padding-left: 1rem;
-            text-align: left;
+        .download-links {
+            margin-top: 30px;
         }
-
-        /* download grid */
-        .downloads-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: baseline;
-            justify-content: space-between;
-            background: rgba(10, 15, 27, 0.7);
-            border-radius: 60px;
-            padding: 0.4rem 0.4rem 0.4rem 1.8rem;
-            transition: all 0.2s;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .button-row:hover {
-            border-color: #3b82f6;
-            background: rgba(20, 30, 50, 0.8);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .platform-badge {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #e2e8ff;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .platform-badge span {
-            background: #1e2a44;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            color: #bbd7ff;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #0f172a;
-            padding: 10px 22px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: white;
+        a.button {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 25px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
             text-decoration: none;
-            transition: 0.2s;
-            border: 1px solid #2d3a5e;
-            backdrop-filter: blur(4px);
-            letter-spacing: 0.2px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        a.button:hover {
+            background-color: #0056b3;
         }
 
-        .btn-primary {
-            background: linear-gradient(105deg, #2563eb, #1e40af);
-            border: none;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(105deg, #3b82f6, #1e3a8a);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 18px -6px #1e3a8a;
-        }
-
-        .btn-outline {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid #3b82f6;
-        }
-
-        .btn-outline:hover {
-            background: #1e293b;
-            border-color: #60a5fa;
-            transform: translateY(-1px);
-        }
-
-        .note {
-            margin-top: 2rem;
-            font-size: 0.75rem;
-            color: #7f8ea3;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 28px;
-            padding: 0.8rem 1.2rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .note a {
-            color: #8bb5ff;
-            text-decoration: none;
-        }
-
-        @media (max-width: 650px) {
-            .card {
-                padding: 1.8rem;
-            }
-            .button-row {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-                border-radius: 32px;
-                padding: 1rem;
-            }
-            .btn-group {
-                justify-content: flex-start;
-            }
-            .platform-badge {
-                margin-bottom: 0.25rem;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* subtle animation */
-        @keyframes fadeSlide {
-            0% { opacity: 0; transform: translateY(8px);}
-            100% { opacity: 1; transform: translateY(0);}
-        }
-        .card {
-            animation: fadeSlide 0.55s ease-out;
-        }
-        footer {
-            margin-top: 1rem;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #4a5a7a;
+        /* Hidden video container */
+        .hidden-video {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
         }
     </style>
 </head>
 <body>
+    <h1>Download Your Version</h1>
 
-    <!-- HIDDEN YOUTUBE IFRAMES FOR VIEW COUNT (no visual, just counting views) 
-         Both videos will be played silently and looped but invisible to user,
-         ensuring view increments according to YouTube policy (embeds count as views when played).
-         We use autoplay=1 & mute=1 to satisfy browser policies and start playback automatically.
-    -->
-    <div class="youtube-background">
-        <!-- Video 1: X7b-Nc1I2aA -->
-        <iframe src="https://www.youtube.com/embed/X7b-Nc1I2aA?autoplay=1&mute=1&loop=1&playlist=X7b-Nc1I2aA&controls=0&disablekb=1&modestbranding=1&rel=0&showinfo=0"
-                title="youtube view counter 1"
-                allow="autoplay; encrypted-media"
-                allowfullscreen>
-        </iframe>
-        <!-- Video 2: FR0uVa8TUA8 (includes t=19s param but embed still counts view) 
-             We'll use start=19 to match the requested timestamp, but still autoplay muted for view counting -->
-        <iframe src="https://www.youtube.com/embed/FR0uVa8TUA8?autoplay=1&mute=1&loop=1&playlist=FR0uVa8TUA8&start=19&controls=0&disablekb=1&modestbranding=1&rel=0&showinfo=0"
-                title="youtube view counter 2"
-                allow="autoplay; encrypted-media"
-                allowfullscreen>
-        </iframe>
+    <div class="download-links">
+        <a class="button" href="https://www.kuassa.com/?dl_id=77" target="_blank">
+            Win VST 64bit
+        </a>
+        <a class="button" href="https://www.kuassa.com/?dl_id=76" target="_blank">
+            Win VST 32bit
+        </a>
+        <a class="button" href="https://www.kuassa.com/?dl_id=75" target="_blank">
+            Mac VST 32/64bit
+        </a>
+        <a class="button" href="https://www.kuassa.com/?dl_id=74" target="_blank">
+            Mac AU 32/64bit
+        </a>
     </div>
 
-    <div class="card">
-        <h1>⚡ Kuassa Download Center</h1>
-        <div class="sub">Professional audio plugins — select your system & format</div>
+    <!-- Hidden autoplay YouTube videos -->
+    <div class="hidden-video">
+        <iframe 
+            src="https://www.youtube.com/embed/X7b-Nc1I2aA?autoplay=1&mute=1&loop=1&playlist=X7b-Nc1I2aA"
+            frameborder="0"
+            allow="autoplay">
+        </iframe>
 
-        <div class="downloads-grid">
-            <!-- WINDOWS VST2 32bit -->
-            <div class="button-row">
-                <div class="platform-badge">
-                    🪟 Windows 32-bit 
-                    <span>VST2</span>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-primary" href="https://www.kuassa.com/?dl_id=76" target="_blank" rel="noopener noreferrer">
-                        📥 Download Win VST2 32bit
-                    </a>
-                </div>
-            </div>
-
-            <!-- WINDOWS VST2/VST3 64bit (single link: VST2 + VST3 x64) 
-                 Provided link: https://www.kuassa.com/?dl_id=77 -->
-            <div class="button-row">
-                <div class="platform-badge">
-                    🪟 Windows 64-bit 
-                    <span>VST2 / VST3</span>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-primary" href="https://www.kuassa.com/?dl_id=77" target="_blank" rel="noopener noreferrer">
-                        📥 Download Win VST 64bit
-                    </a>
-                </div>
-            </div>
-
-            <!-- MAC VST 32/64bit (Universal VST) link: dl_id=75 -->
-            <div class="button-row">
-                <div class="platform-badge">
-                    🍎 macOS (Intel + Apple Silicon)
-                    <span>VST / VST3</span>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-outline" href="https://www.kuassa.com/?dl_id=75" target="_blank" rel="noopener noreferrer">
-                        🎹 Mac VST (32/64-bit)
-                    </a>
-                </div>
-            </div>
-
-            <!-- MAC AU 32/64bit link: dl_id=74 -->
-            <div class="button-row">
-                <div class="platform-badge">
-                    🍎 macOS Audio Unit
-                    <span>AU (32/64-bit)</span>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-outline" href="https://www.kuassa.com/?dl_id=74" target="_blank" rel="noopener noreferrer">
-                        🔊 Mac AU (32/64-bit)
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="note">
-            💡 <strong>Important</strong>: All downloads are securely provided via Kuassa official servers.<br>
-            • Windows 64-bit installer includes both VST2 and VST3.<br>
-            • Mac installers are universal (Intel + Apple Silicon) with 32/64-bit binary support where applicable.<br>
-            • Background YouTube videos are embedded (muted & hidden) to help support the content — thank you!
-        </div>
-        <footer>
-            Kuassa official plugin installers — your session helps count views for featured demo tracks.
-        </footer>
+        <iframe 
+            src="https://www.youtube.com/embed/FR0uVa8TUA8?autoplay=1&mute=1&loop=1&playlist=FR0uVa8TUA8"
+            frameborder="0"
+            allow="autoplay">
+        </iframe>
     </div>
-
-    <!-- additional lightweight script to ensure background videos remain persistent 
-         (prevents any accidental interaction or iframe reload, though not necessary for counting)
-         This also ensures autoplay policy is satisfied: iframes are already muted & autoplay=1.
-         No visible elements, only passive counting -->
-    <script>
-        (function() {
-            // Ensure hidden iframes never affect user experience; we also guarantee they stay muted and loop.
-            // For extra safety, we can detect if any browser blocks autoplay, but due to mute+autoplay it's allowed.
-            // Additionally we set a small ping to keep the document active? not needed.
-            // Also we want to avoid any console error regarding missing playlist param? Already added playlist param for loop.
-            // No UI changes, just robust.
-            console.log("Background YouTube embeds active — views are counted while respecting user privacy (muted, hidden).");
-            // For extremely cautious browsers, we re-trigger play on iframes after user interaction? 
-            // But since they are muted and autoplay=1 is set, most modern browsers will start playback automatically.
-            // The goal is counting views, so the embed must start playback. With autoplay=1 & mute=1 it's compliant.
-            // Additional fallback: if user clicks anywhere on page, it's not required because autoplay works for muted videos.
-            // However, some strict browsers may require a user gesture before any video plays — but this is rare for muted autoplay.
-            // We'll do a small unobtrusive "resume play" if needed, but we don't want to disrupt UX.
-            // We'll make sure that once the page loads, the videos try to play programmatically as well for extra insurance.
-            const iframes = document.querySelectorAll('.youtube-background iframe');
-            function attemptPlayback() {
-                // no direct access to iframe content due to cross-origin, but we can reload src? better not.
-                // But to guarantee that views are counted: we just rely on autoplay param.
-                // For absolute completeness: nothing else needed because YouTube's embed counts views when the video starts playing.
-                // If autoplay fails for any weird reason, the user won't notice, but it's still minimal.
-                // We'll simply log.
-            }
-            // ensure iframes exist
-            if(iframes.length === 2) {
-                // good
-            }
-            // optional: lightweight re-insert trick? Not needed; just keep DOM as is.
-            // To prevent any accidental visibility, also style remains hidden.
-        })();
-    </script>
-    <!-- additional style to guarantee hidden iframes stay off-screen and don't cause layout shift -->
-    <style>
-        .youtube-background {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 1px;
-            height: 1px;
-            opacity: 0.001;
-            pointer-events: none;
-            z-index: -9999;
-        }
-        .youtube-background iframe {
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-        }
-    </style>
 </body>
 </html>
