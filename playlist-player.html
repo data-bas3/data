@@ -63,7 +63,7 @@
 
   .card {
     width: 100%;
-    max-width: 720px;
+    max-width: 760px;
     background: var(--card);
     border-radius: 16px;
     padding: 20px;
@@ -142,8 +142,8 @@
 </head>
 <body>
 
-<h1>🎧 Playlist → Video Player</h1>
-<div class="subtitle">Spotify playlist plays first, then four song clips from the YouTube video, in order.</div>
+<h1>🎬 Song Clip Player</h1>
+<div class="subtitle">Plays four song clips from the YouTube video, in order.</div>
 
 <div class="status-bar">
   <div><span class="status-label">Now playing: </span><span id="statusValue" class="status-value idle">Not started</span></div>
@@ -151,22 +151,7 @@
 </div>
 
 <div class="controls">
-  <button id="startBtn">▶ Start</button>
-  <button id="skipBtn">Songs finished — play video clips</button>
-</div>
-
-<div class="card">
-  <h2>Spotify Playlist</h2>
-  <iframe
-    data-testid="embed-iframe"
-    src="https://open.spotify.com/embed/playlist/49ZE6pJNjR96x7TWDqYFDI?utm_source=generator&si=0db6c52d86ad4df8"
-    width="100%" height="352" frameborder="0"
-    style="border-radius:12px"
-    allowfullscreen=""
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-    loading="lazy">
-  </iframe>
-  <div class="note" style="margin-top:14px;">Press play inside the Spotify player above. When the playlist finishes, click "Songs finished — play video clips" below (Spotify doesn't let outside pages detect this automatically, so it's a manual handoff).</div>
+  <button id="startBtn">▶ Play clips</button>
 </div>
 
 <div class="card">
@@ -176,10 +161,6 @@
 </div>
 
 <button id="resetBtn">Reset</button>
-
-<div class="note">
-  Autoplay of the Spotify playlist ending is detected on a best-effort basis (browsers and Spotify don't expose a clean "playlist finished" signal). If the video clips don't start automatically once the playlist ends, use "Skip straight to video clips" above.
-</div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
