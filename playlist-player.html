@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -152,12 +152,19 @@
 
 <div class="controls">
   <button id="startBtn">▶ Start</button>
-  <button id="skipBtn" disabled>Skip straight to video clips</button>
+  <button id="skipBtn">Songs finished — play video clips</button>
 </div>
 
 <div class="card">
   <h2>Spotify Playlist</h2>
-  <div id="spotify-embed"></div>
+  <iframe
+    src="https://open.spotify.com/embed/playlist/6x0qX8hcOAIKnAMZuCet3M?utm_source=generator"
+    width="100%" height="380" frameborder="0"
+    allowfullscreen=""
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    loading="lazy">
+  </iframe>
+  <div class="note" style="margin-top:14px;">Press play inside the Spotify player above. When the playlist finishes, click "Songs finished — play video clips" below (Spotify doesn't let outside pages detect this automatically, so it's a manual handoff).</div>
 </div>
 
 <div class="card">
@@ -173,7 +180,6 @@
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-<script src="https://open.spotify.com/embed/iframe-api/v1"></script>
 <script>
   // ---------- CONFIG ----------
   const SPOTIFY_PLAYLIST_ID = "6x0qX8hcOAIKnAMZuCet3M";
@@ -188,11 +194,8 @@
   // ---------- STATE ----------
   let ytPlayer = null;
   let ytReady = false;
-  let spotifyController = null;
-  let spotifyReady = false;
   let currentSegmentIndex = -1;
   let segmentCheckInterval = null;
-  let hasStartedSpotifyPlayback = false;
   let handedOffToYouTube = false;
 
   const statusValue = document.getElementById('statusValue');
@@ -223,43 +226,6 @@
     statusValue.className = 'status-value ' + (mode || 'idle');
   }
 
-  // ---------- SPOTIFY EMBED ----------
-  window.onSpotifyIframeApiReady = (IFrameAPI) => {
-    const element = document.getElementById('spotify-embed');
-    const options = {
-      uri: `spotify:playlist:${SPOTIFY_PLAYLIST_ID}`,
-      width: '100%',
-      height: '380'
-    };
-    const callback = (controller) => {
-      spotifyController = controller;
-      spotifyReady = true;
-
-      controller.addListener('playback_update', (e) => {
-        const data = e.data;
-        if (!data) return;
-
-        if (!data.isPaused) {
-          hasStartedSpotifyPlayback = true;
-          if (!handedOffToYouTube) setStatus('Spotify playlist', 'active-spotify');
-        }
-
-        // Best-effort "playlist finished" heuristic:
-        // playback was going, then it paused and reset to the very start (position 0)
-        // without the user having touched anything.
-        if (hasStartedSpotifyPlayback && !handedOffToYouTube &&
-            data.isPaused && data.position === 0 && data.duration === 0) {
-          startYouTubeSequence();
-        }
-      });
-
-      controller.addListener('ready', () => {
-        skipBtn.disabled = false;
-      });
-    };
-    IFrameAPI.createController(element, options, callback);
-  };
-
   // ---------- YOUTUBE PLAYER ----------
   function onYouTubeIframeAPIReady() {
     ytPlayer = new YT.Player('player', {
@@ -276,10 +242,6 @@
   function startYouTubeSequence() {
     if (handedOffToYouTube) return;
     handedOffToYouTube = true;
-
-    if (spotifyController) {
-      try { spotifyController.pause(); } catch (e) {}
-    }
 
     currentSegmentIndex = 0;
     renderSegmentList();
@@ -328,14 +290,7 @@
   // ---------- BUTTONS ----------
   startBtn.addEventListener('click', () => {
     startBtn.disabled = true;
-    if (spotifyController) {
-      try { spotifyController.play(); } catch (e) {}
-    }
-    // Nudge YouTube player into a "ready" state under the user gesture too.
-    if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !handedOffToYouTube) {
-      // don't actually play yet — just warm it up silently
-    }
-    setStatus('Spotify playlist', 'active-spotify');
+    setStatus('Spotify playlist — press play above', 'active-spotify');
   });
 
   skipBtn.addEventListener('click', () => {
@@ -345,13 +300,11 @@
   resetBtn.addEventListener('click', () => {
     clearInterval(segmentCheckInterval);
     handedOffToYouTube = false;
-    hasStartedSpotifyPlayback = false;
     currentSegmentIndex = -1;
     renderSegmentList();
     startBtn.disabled = false;
     setStatus('Not started', 'idle');
     clipValue.textContent = '—';
-    if (spotifyController) { try { spotifyController.pause(); } catch (e) {} }
     if (ytPlayer && typeof ytPlayer.stopVideo === 'function') { try { ytPlayer.stopVideo(); } catch (e) {} }
   });
 </script>
