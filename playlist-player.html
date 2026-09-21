@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playlist Player</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f12;
+    --card: #161a20;
+    --accent: #1db954;
+    --accent-2: #ff0000;
+    --text: #f2f2f2;
+    --muted: #9aa0a6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(160deg, #0d0f12, #1a1d23);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-weight: 300;
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .status-bar {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+  .status-label { color: var(--muted); font-weight: 500; }
+  .status-value { font-weight: 700; }
+  .status-value.active-spotify { color: var(--accent); }
+  .status-value.active-youtube { color: var(--accent-2); }
+  .status-value.idle { color: var(--muted); }
+
+  .card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
+  .card h2 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin: 0 0 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  iframe { border-radius: 12px; border: none; width: 100%; }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  button {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  #startBtn { background: var(--accent); color: #05130a; }
+  #skipBtn { background: transparent; color: var(--text); border: 1px solid #3a3f47; }
+  #resetBtn { background: transparent; color: var(--muted); border: 1px solid #2a2e34; font-size: 0.85rem; padding: 10px 20px; }
+
+  .segment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .segment-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #10131700;
+    border: 1px solid #22262c;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .segment-list li.current {
+    border-color: var(--accent-2);
+    color: var(--text);
+    background: rgba(255,0,0,0.08);
+  }
+  .segment-list li.done {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+  .note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+    max-width: 640px;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎧 Playlist → Video Player</h1>
+<div class="subtitle">Spotify playlist plays first, then four song clips from the YouTube video, in order.</div>
+
+<div class="status-bar">
+  <div><span class="status-label">Now playing: </span><span id="statusValue" class="status-value idle">Not started</span></div>
+  <div><span class="status-label">Clip: </span><span id="clipValue" class="status-value idle">—</span></div>
+</div>
+
+<div class="controls">
+  <button id="startBtn">▶ Start</button>
+  <button id="skipBtn" disabled>Skip straight to video clips</button>
+</div>
+
+<div class="card">
+  <h2>Spotify Playlist</h2>
+  <div id="spotify-embed"></div>
+</div>
+
+<div class="card">
+  <h2>YouTube Clips</h2>
+  <div id="player"></div>
+  <ul class="segment-list" id="segmentList"></ul>
+</div>
+
+<button id="resetBtn">Reset</button>
+
+<div class="note">
+  Autoplay of the Spotify playlist ending is detected on a best-effort basis (browsers and Spotify don't expose a clean "playlist finished" signal). If the video clips don't start automatically once the playlist ends, use "Skip straight to video clips" above.
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://open.spotify.com/embed/iframe-api/v1"></script>
+<script>
+  // ---------- CONFIG ----------
+  const SPOTIFY_PLAYLIST_ID = "6x0qX8hcOAIKnAMZuCet3M";
+  const YT_VIDEO_ID = "KlY6ZJNXgcE";
+  const segments = [
+    { name: "Saab Alaya",     start: 1333, end: 1549 },
+    { name: "Khallouni",      start: 464,  end: 654  },
+    { name: "Lakder",         start: 654,  end: 885  },
+    { name: "Malakti Rohy",   start: 1062, end: 1333 }
+  ];
+
+  // ---------- STATE ----------
+  let ytPlayer = null;
+  let ytReady = false;
+  let spotifyController = null;
+  let spotifyReady = false;
+  let currentSegmentIndex = -1;
+  let segmentCheckInterval = null;
+  let hasStartedSpotifyPlayback = false;
+  let handedOffToYouTube = false;
+
+  const statusValue = document.getElementById('statusValue');
+  const clipValue = document.getElementById('clipValue');
+  const startBtn = document.getElementById('startBtn');
+  const skipBtn = document.getElementById('skipBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const segmentListEl = document.getElementById('segmentList');
+
+  function fmtTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = String(Math.floor(s % 60)).padStart(2, '0');
+    return `${m}:${sec}`;
+  }
+
+  function renderSegmentList() {
+    segmentListEl.innerHTML = segments.map((seg, i) => {
+      let cls = '';
+      if (i < currentSegmentIndex) cls = 'done';
+      if (i === currentSegmentIndex) cls = 'current';
+      return `<li class="${cls}"><span>${seg.name}</span><span>${fmtTime(seg.start)} – ${fmtTime(seg.end)}</span></li>`;
+    }).join('');
+  }
+  renderSegmentList();
+
+  function setStatus(text, mode) {
+    statusValue.textContent = text;
+    statusValue.className = 'status-value ' + (mode || 'idle');
+  }
+
+  // ---------- SPOTIFY EMBED ----------
+  window.onSpotifyIframeApiReady = (IFrameAPI) => {
+    const element = document.getElementById('spotify-embed');
+    const options = {
+      uri: `spotify:playlist:${SPOTIFY_PLAYLIST_ID}`,
+      width: '100%',
+      height: '380'
+    };
+    const callback = (controller) => {
+      spotifyController = controller;
+      spotifyReady = true;
+
+      controller.addListener('playback_update', (e) => {
+        const data = e.data;
+        if (!data) return;
+
+        if (!data.isPaused) {
+          hasStartedSpotifyPlayback = true;
+          if (!handedOffToYouTube) setStatus('Spotify playlist', 'active-spotify');
+        }
+
+        // Best-effort "playlist finished" heuristic:
+        // playback was going, then it paused and reset to the very start (position 0)
+        // without the user having touched anything.
+        if (hasStartedSpotifyPlayback && !handedOffToYouTube &&
+            data.isPaused && data.position === 0 && data.duration === 0) {
+          startYouTubeSequence();
+        }
+      });
+
+      controller.addListener('ready', () => {
+        skipBtn.disabled = false;
+      });
+    };
+    IFrameAPI.createController(element, options, callback);
+  };
+
+  // ---------- YOUTUBE PLAYER ----------
+  function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('player', {
+      height: '360',
+      width: '100%',
+      videoId: YT_VIDEO_ID,
+      playerVars: { rel: 0, modestbranding: 1 },
+      events: {
+        onReady: () => { ytReady = true; }
+      }
+    });
+  }
+
+  function startYouTubeSequence() {
+    if (handedOffToYouTube) return;
+    handedOffToYouTube = true;
+
+    if (spotifyController) {
+      try { spotifyController.pause(); } catch (e) {}
+    }
+
+    currentSegmentIndex = 0;
+    renderSegmentList();
+    playCurrentSegment();
+  }
+
+  function playCurrentSegment() {
+    if (!ytReady || currentSegmentIndex >= segments.length) {
+      stopEverything();
+      return;
+    }
+    const seg = segments[currentSegmentIndex];
+    setStatus(`YouTube clip: ${seg.name}`, 'active-youtube');
+    clipValue.textContent = `${currentSegmentIndex + 1} / ${segments.length}`;
+    renderSegmentList();
+
+    ytPlayer.loadVideoById({ videoId: YT_VIDEO_ID, startSeconds: seg.start });
+
+    clearInterval(segmentCheckInterval);
+    segmentCheckInterval = setInterval(() => {
+      if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+      const t = ytPlayer.getCurrentTime();
+      if (t >= seg.end) {
+        clearInterval(segmentCheckInterval);
+        currentSegmentIndex++;
+        if (currentSegmentIndex < segments.length) {
+          playCurrentSegment();
+        } else {
+          stopEverything();
+        }
+      }
+    }, 200);
+  }
+
+  function stopEverything() {
+    clearInterval(segmentCheckInterval);
+    if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+      ytPlayer.pauseVideo();
+    }
+    currentSegmentIndex = segments.length;
+    renderSegmentList();
+    setStatus('Finished — no more songs', 'idle');
+    clipValue.textContent = '—';
+  }
+
+  // ---------- BUTTONS ----------
+  startBtn.addEventListener('click', () => {
+    startBtn.disabled = true;
+    if (spotifyController) {
+      try { spotifyController.play(); } catch (e) {}
+    }
+    // Nudge YouTube player into a "ready" state under the user gesture too.
+    if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !handedOffToYouTube) {
+      // don't actually play yet — just warm it up silently
+    }
+    setStatus('Spotify playlist', 'active-spotify');
+  });
+
+  skipBtn.addEventListener('click', () => {
+    startYouTubeSequence();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    clearInterval(segmentCheckInterval);
+    handedOffToYouTube = false;
+    hasStartedSpotifyPlayback = false;
+    currentSegmentIndex = -1;
+    renderSegmentList();
+    startBtn.disabled = false;
+    setStatus('Not started', 'idle');
+    clipValue.textContent = '—';
+    if (spotifyController) { try { spotifyController.pause(); } catch (e) {} }
+    if (ytPlayer && typeof ytPlayer.stopVideo === 'function') { try { ytPlayer.stopVideo(); } catch (e) {} }
+  });
+</script>
+</body>
+</html>
