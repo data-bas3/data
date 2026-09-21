@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -136,6 +136,50 @@
     line-height: 1.5;
     margin-top: 12px;
   }
+  .volume-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #22262c;
+    border-radius: 10px;
+  }
+  .vol-icon { font-size: 1.1rem; }
+  #volumeSlider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    background: #2a2e34;
+    outline: none;
+  }
+  #volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+  #volumeSlider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+  #volumeValue {
+    font-size: 0.85rem;
+    color: var(--muted);
+    min-width: 42px;
+    text-align: right;
+  }
 </style>
 </head>
 <body>
@@ -155,6 +199,13 @@
 <div class="card">
   <h2>YouTube Clips</h2>
   <div id="player"></div>
+
+  <div class="volume-row">
+    <span class="vol-icon" id="volIcon">🔊</span>
+    <input type="range" id="volumeSlider" min="0" max="100" value="100">
+    <span id="volumeValue">100%</span>
+  </div>
+
   <ul class="segment-list" id="segmentList"></ul>
 </div>
 
@@ -163,7 +214,6 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
   // ---------- CONFIG ----------
-  const SPOTIFY_PLAYLIST_ID = "49ZE6pJNjR96x7TWDqYFDI";
   const YT_VIDEO_ID = "KlY6ZJNXgcE";
   const segments = [
     { name: "Saab Alaya",     start: 1333, end: 1549 },
@@ -184,6 +234,9 @@
   const startBtn = document.getElementById('startBtn');
   const resetBtn = document.getElementById('resetBtn');
   const segmentListEl = document.getElementById('segmentList');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const volumeValue = document.getElementById('volumeValue');
+  const volIcon = document.getElementById('volIcon');
 
   function fmtTime(s) {
     const m = Math.floor(s / 60);
