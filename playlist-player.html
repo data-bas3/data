@@ -352,7 +352,6 @@
 
   function playTrack(index){
     if(!isPlayerReady) return;
-    hideThumb();
     currentIndex = index;
     highlightActive();
     player.loadVideoById({
@@ -366,13 +365,27 @@
   function onPlayerStateChange(event){
     if(event.data === YT.PlayerState.PLAYING){
       document.getElementById('playPauseBtn').textContent = '⏸ Pause';
+      setThumbPlayingState(true);
       startWatcher();
     }
     if(event.data === YT.PlayerState.PAUSED){
       document.getElementById('playPauseBtn').textContent = '▶ Play';
+      setThumbPlayingState(false);
     }
     if(event.data === YT.PlayerState.ENDED){
       goNext();
+    }
+  }
+
+  function setThumbPlayingState(isPlaying){
+    const overlay = document.getElementById('thumbOverlay');
+    const playBtn = overlay.querySelector('.thumb-play-btn');
+    if(isPlaying){
+      playBtn.style.display = 'none';
+      overlay.style.cursor = 'default';
+    } else {
+      playBtn.style.display = 'flex';
+      overlay.style.cursor = 'pointer';
     }
   }
 
@@ -430,11 +443,18 @@
   document.getElementById('prevBtn').addEventListener('click', goPrev);
 
   document.getElementById('thumbOverlay').addEventListener('click', () => {
-    hideThumb();
-    playTrack(currentIndex);
+    if(!isPlayerReady) return;
+    const state = player.getPlayerState();
+    if(state === YT.PlayerState.PLAYING){
+      player.pauseVideo();
+    } else if(state === YT.PlayerState.PAUSED){
+      player.playVideo();
+    } else {
+      playTrack(currentIndex);
+    }
   });
   document.getElementById('thumbFallback').addEventListener('click', () => {
-    hideThumb();
+    document.getElementById('thumbFallback').classList.add('hidden');
     playTrack(currentIndex);
   });
 
