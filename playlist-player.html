@@ -102,6 +102,25 @@
   .thumb-overlay.hidden{
     display:none;
   }
+  .thumb-fallback{
+    display:none;
+    position:absolute;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:20px;
+    background:#1c2029;
+    color:var(--muted);
+    font-size:0.9rem;
+    cursor:pointer;
+    z-index:4;
+  }
+  .thumb-fallback.hidden{
+    display:none !important;
+  }
   .now-playing{
     display:flex;
     align-items:center;
@@ -233,8 +252,11 @@
     <div class="video-frame">
       <div id="player"></div>
       <div id="thumbOverlay" class="thumb-overlay">
-        <img src="https://i.postimg.cc/Xv3Zv04M/maxresdefault.jpg" alt="Video thumbnail" />
+        <img src="https://data-bas3.github.io/data/Rhany.png" alt="Video thumbnail" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'; document.getElementById('thumbFallback').style.display='flex';" />
         <div class="thumb-play-btn">▶</div>
+      </div>
+      <div id="thumbFallback" class="thumb-fallback">
+        Thumbnail image failed to load — click here to play
       </div>
     </div>
 
@@ -411,9 +433,14 @@
     hideThumb();
     playTrack(currentIndex);
   });
+  document.getElementById('thumbFallback').addEventListener('click', () => {
+    hideThumb();
+    playTrack(currentIndex);
+  });
 
   function hideThumb(){
     document.getElementById('thumbOverlay').classList.add('hidden');
+    document.getElementById('thumbFallback').classList.add('hidden');
   }
 
   highlightActive();
