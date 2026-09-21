@@ -64,6 +64,44 @@
     width:100%;
     height:100%;
   }
+  .thumb-overlay{
+    position:absolute;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:5;
+  }
+  .thumb-overlay img{
+    position:absolute;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .thumb-play-btn{
+    position:relative;
+    width:74px;
+    height:74px;
+    border-radius:50%;
+    background:rgba(230,57,70,0.9);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.8rem;
+    box-shadow:0 6px 20px rgba(0,0,0,0.4);
+    transition:transform .15s ease;
+  }
+  .thumb-overlay:hover .thumb-play-btn{
+    transform:scale(1.08);
+  }
+  .thumb-overlay.hidden{
+    display:none;
+  }
   .now-playing{
     display:flex;
     align-items:center;
@@ -194,6 +232,10 @@
   <div class="player-card">
     <div class="video-frame">
       <div id="player"></div>
+      <div id="thumbOverlay" class="thumb-overlay">
+        <img src="https://i.postimg.cc/Xv3Zv04M/maxresdefault.jpg" alt="Video thumbnail" />
+        <div class="thumb-play-btn">▶</div>
+      </div>
     </div>
 
     <div class="now-playing">
@@ -288,6 +330,7 @@
 
   function playTrack(index){
     if(!isPlayerReady) return;
+    hideThumb();
     currentIndex = index;
     highlightActive();
     player.loadVideoById({
@@ -363,6 +406,15 @@
 
   document.getElementById('nextBtn').addEventListener('click', goNext);
   document.getElementById('prevBtn').addEventListener('click', goPrev);
+
+  document.getElementById('thumbOverlay').addEventListener('click', () => {
+    hideThumb();
+    playTrack(currentIndex);
+  });
+
+  function hideThumb(){
+    document.getElementById('thumbOverlay').classList.add('hidden');
+  }
 
   highlightActive();
 </script>
